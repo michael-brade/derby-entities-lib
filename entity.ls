@@ -1,20 +1,58 @@
+require! {
+    'lodash': _
+}
 
-export class Entity
+# A class to accesss entities and items.
+export class Entities
+
+    # model
+    # entities
+    # entitiesIdx
+
+    (model, entities) ->
+        @model = model
+        @entities = entities
+        @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
+            entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need _.clone()
+            return entity.id
+
+        # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
+        #   can only use model paths as arguments!
+        #@model.fn 'getItems', @getItems         # "this" cannot be bound here....
+        #@model.fn 'getItemName', @getItemName
 
 
-    getItemName: (item) ->
-        #entity = _.find(@entities, (entity) -> entity.id == entityId)
-        entity = @itemMap.get(item.id).entity
-        if entity.type == 'entity'
-            if entity.attributes.name.i18n
-            else
-        else if entity.i18n
-            # TODO locale: item.name[l(@model.get($locale))]
-            return item.name.en
-        else
-            return item.name
+    get: ->
+        @entities
 
+    getIdx: ->
+        @entitiesIdx
 
     # get all items of the given entity, return an array
     getItems: (entityId) ->
         @model.root.at(entityId).filter(null).get!
+
+
+    # find the item of any entity with the given ID - needed for references
+    getItem: (itemId) ->
+        ...
+
+    # find the indexed entity with the given id
+    getEntity: (entityId) ->
+        @entitiesIdx[entityId]
+
+    getItemName: (item, entity) ->
+        console.log "Entities.getItemName:", arguments
+        #entity = _.find(@entities, (entity) -> entity.id == entityId)
+        #entity = @itemMap.get(item.id).entity
+        if entity.attributes.name.type == 'entity'
+            subentityId = entity.attributes.name.entity
+            name = ""
+            for subitem in item.name
+                name += @getItemName subitem, @getEntity(subentityId)
+            return name + '\n' # TODO: maybe return a list of lines?
+        else if entity.attributes.name.i18n
+            locale = 'en'   # TODO locale = l(@model.get($locale))
+            return item.name[locale] + ' '
+        else
+            return item.name + ' '

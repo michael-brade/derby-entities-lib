@@ -3,6 +3,9 @@ require! {
     './base': { EntityDependencies }
 }
 
+require '../../polyfills'
+
+
 # This class creates an object like this:
 # {
 #    packageNames: ['Main', 'A', 'B'],
@@ -14,8 +17,8 @@ export class DependencyMatrix extends EntityDependencies
 
     (model, entities) ->
         super ...
-        @matrix = @model.at '_dependencyIdMatrix'
-        @initMatrix!
+        @matrix = @model.at '_dependencyIdMatrix'   # first create matrix because init() calls @addDependency()
+        @init!
 
 
     # adds a dependency to the matrix
@@ -26,13 +29,12 @@ export class DependencyMatrix extends EntityDependencies
 
     # return the matrix
     data: ->
-        itemNames = _.map(Array.from @itemMap.values!, (item) ~>
-            @getItemName item
-        )
+        itemNames = _.map Array.from(@itemMap.values!), (v) ~>
+            @entities.getItemName v.item, v.entity
 
         console.log "DATA:", itemNames
 
         data = {
-            packageNames: Array.from @itemMap.values!
+            packageNames: itemNames
             matrix: ""
         }

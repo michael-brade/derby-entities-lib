@@ -1,4 +1,7 @@
-_ = require 'lodash'
+require! {
+    'lodash': _
+    '../entity': { Entities }
+}
 
 # Numbers: there are T entity types and E(type) entity items for each type.
 #
@@ -28,11 +31,7 @@ export class EntityDependencies
              throw new Error("Can't instantiate abstract class!");
 
         @model = model
-        #@entities = entities
-        @entities = _.indexBy _.clone(entities, true), (entity) ->
-            #entity.attributes = _.indexBy(entity.attributes, 'id')
-            return entity.id
-
+        @entities = new Entities(model, entities)
 
         # entityId -> range object
         @ranges = new Map()
@@ -40,6 +39,32 @@ export class EntityDependencies
         # itemId -> entityId
         @itemMap = new Map()
 
+
+    init: ->
+        # for each entity... (@entities is an array)
+        for let key, entity of @entities.getIdx!
+            items = @entities.getItems(entity.id)
+
+            console.log "entity: ", entity
+            console.log "items: ", items
+
+            @addRange entity.id, items.length  # entity.id is the name like "bijas"
+
+            # # before we can use getItems, they need to be loaded
+            # entity.attributes.forEach (attr) ~>
+            #     if (attr.type == 'entity')
+            #         @model.query(attr.entity, {}).subscribe (err) ->
+            #             return next err if err
+
+
+            # ...go through all its items
+            for let item in items
+                @addItem entity, item
+
+                # ...and find their dependencies
+                for let attr of entity.attributes
+                    for let id in @getAllDependencyIds(item, attr)
+                        @addDependency item.id, id
 
     # adds a dependency to the matrix
     addDependency: (sourceId, dependencyId) ->
@@ -64,9 +89,9 @@ export class EntityDependencies
         @rangeCur += count
 
 
-    # find the item of any entity with the given ID
-    getItem: (itemId) ->
-        ...
+    # # find the item of any entity with the given ID
+    # getItem: (itemId) ->
+    #     ...
 
 
     # get all dependency ids for this item
@@ -82,31 +107,3 @@ export class EntityDependencies
             ids.push dep.id               # TODO: if reference, deal with it
 
         return ids
-
-
-
-    initMatrix: ->
-        # for each entity... (@entities is an array)
-        for let key, entity of @entities
-            items = @getItems(entity.id)
-
-            console.log "entity: ", entity
-            console.log "items: ", items
-
-            @addRange entity.id, items.length  # entity.id is the name like "bijas"
-
-            # # before we can use getItems, they need to be loaded
-            # entity.attributes.forEach (attr) ~>
-            #     if (attr.type == 'entity')
-            #         @model.query(attr.entity, {}).subscribe (err) ->
-            #             return next err if err
-
-
-            # ...go through all its items
-            for let item in items
-                @addItem entity, item
-
-                # ...and find their dependencies
-                for let attr in entity.attributes
-                    for let id in @getAllDependencyIds(item, attr)
-                        @addDependency item.id, id
