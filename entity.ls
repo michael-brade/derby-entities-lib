@@ -42,7 +42,6 @@ export class Entities
         @entitiesIdx[entityId]
 
     getItemName: (item, entity) ->
-        console.log "Entities.getItemName:", arguments
         #entity = _.find(@entities, (entity) -> entity.id == entityId)
         #entity = @itemMap.get(item.id).entity
         if entity.attributes.name.type == 'entity'

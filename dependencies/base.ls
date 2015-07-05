@@ -39,7 +39,6 @@ export class EntityDependencies
         # itemId -> entityId
         @itemMap = new Map()
 
-
     init: ->
         # for each entity... (@entities is an array)
         for let key, entity of @entities.getIdx!
@@ -62,7 +61,7 @@ export class EntityDependencies
                 @addItem entity, item
 
                 # ...and find their dependencies
-                for let attr of entity.attributes
+                for let attrId, attr of entity.attributes
                     for let id in @getAllDependencyIds(item, attr)
                         @addDependency item.id, id
 
@@ -96,8 +95,6 @@ export class EntityDependencies
 
     # get all dependency ids for this item
     getAllDependencyIds: (item, attr) ->
-        console.log "get deps for: ",  item, " with attr: ", attr
-
         ids = []
 
         if attr.type != 'entity'
