@@ -5,15 +5,15 @@ require! {
 # A class to accesss entities and items.
 export class Entities
 
-    # model
-    # entities
-    # entitiesIdx
+    model: null
+    entities: null
+    entitiesIdx: null
 
     (model, entities) ->
         @model = model
         @entities = entities
         @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
-            entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need _.clone()
+            entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need deep _.clone()
             return entity.id
 
         # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
@@ -41,17 +41,21 @@ export class Entities
     getEntity: (entityId) ->
         @entitiesIdx[entityId]
 
-    getItemName: (item, entity) ->
+    getItemName: (item, entity, locale = 'en') ->
         #entity = _.find(@entities, (entity) -> entity.id == entityId)
         #entity = @itemMap.get(item.id).entity
+        console.log "getIteme", arguments
+
         if entity.attributes.name.type == 'entity'
             subentityId = entity.attributes.name.entity
             name = ""
             for subitem in item.name
-                name += @getItemName subitem, @getEntity(subentityId)
+                name += @getItemName subitem, @getEntity(subentityId), locale
             return name + '\n' # TODO: maybe return a list of lines?
         else if entity.attributes.name.i18n
-            locale = 'en'   # TODO locale = l(@model.get($locale))
             return item.name[locale] + ' '
+        else if not item.name
+            console.warn "getItemName: item.name is undefined!!"
+            return item
         else
             return item.name + ' '
