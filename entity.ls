@@ -9,6 +9,7 @@ export class Entities
     entities: null
     entitiesIdx: null
 
+    # This CTOR loads all given entities into the model.
     (model, entities) ->
         @model = model
         @entities = entities
@@ -33,29 +34,35 @@ export class Entities
         @model.root.at(entityId).filter(null).get!
 
 
-    # find the item of any entity with the given ID - needed for references
-    getItem: (itemId) ->
-        ...
+    # Find the item of the given entity (or any entity if not) with the given ID. Needed to resolve references.
+    getItem: (itemId, entityId) ->
+        if not entityId
+            throw Error 'unimplemented'
+        else
+            return @model.root.at(entityId).get(itemId)
+
 
     # find the indexed entity with the given id
     getEntity: (entityId) ->
         @entitiesIdx[entityId]
 
-    getItemName: (item, entity, locale = 'en') ->
+    # return the attribute of the given item as string
+    getItemAttr: (item, attrId, entityId, locale = 'en') ->
         #entity = _.find(@entities, (entity) -> entity.id == entityId)
         #entity = @itemMap.get(item.id).entity
-        console.log "getIteme", arguments
 
-        if entity.attributes.name.type == 'entity'
-            subentityId = entity.attributes.name.entity
-            name = ""
-            for subitem in item.name
-                name += @getItemName subitem, @getEntity(subentityId), locale
-            return name + '\n' # TODO: maybe return a list of lines?
-        else if entity.attributes.name.i18n
-            return item.name[locale] + ' '
-        else if not item.name
-            console.warn "getItemName: item.name is undefined!!"
-            return item
+        attr = @getEntity(entityId).attributes[attrId]
+
+        if attr.type == 'entity'
+            result = ""
+            for subitem in item[attrId]        # if attr.multi, only then item[attrId] is an array
+                if attr.reference
+                    subitem = @getItem subitem, attr.entity
+
+                result += @getItemAttr subitem, 'name', attr.entity, locale
+
+            return result + '\n' # TODO: maybe return a list of lines?
+        else if attr.i18n
+            return (item[attrId])[locale] + ' '
         else
-            return item.name + ' '
+            return item[attrId] + ' '
