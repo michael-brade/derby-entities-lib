@@ -97,10 +97,13 @@ export class EntityDependencies
     getAllDependencyIds: (item, attr) ->
         ids = []
 
-        if attr.type != 'entity'
+        if attr.type != 'entity' or not item[attr.id]
             return ids
 
         for let dep in item[attr.id]
-            ids.push dep.id               # TODO: if reference, deal with it
+            if attr.reference
+                ids.push dep
+            else
+                ids.push dep.id
 
         return ids

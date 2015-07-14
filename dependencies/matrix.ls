@@ -32,7 +32,7 @@ export class DependencyMatrix extends EntityDependencies
     data: ->
         # TODO: there is an easier way - use a direct loop and .push the item name to itemNames
         itemNames = _.map Array.from(@itemMap.values!), (v) ~>
-            @entities.getItemName v.item, v.entity
+            @entities.getItemAttr v.item, 'name', v.entity.id # TODO: locale!
 
         # create matrix
         matrix = []
