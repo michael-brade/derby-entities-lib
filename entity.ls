@@ -3,6 +3,8 @@ require! {
 }
 
 # A class to accesss entities and items.
+#
+# make it a singleton? call it Repository
 export class Entities
 
     model: null
@@ -10,6 +12,7 @@ export class Entities
     entitiesIdx: null
 
     # This CTOR loads all given entities into the model.
+    # TODO: Could add a third parameter "entity" for a current entity?
     (model, entities) ->
         @model = model
         @entities = entities
@@ -22,6 +25,8 @@ export class Entities
         #@model.fn 'getItems', @getItems         # "this" cannot be bound here....
         #@model.fn 'getItemName', @getItemName
 
+    instance: ->
+        @
 
     get: ->
         @entities
@@ -48,21 +53,27 @@ export class Entities
 
     # return the attribute of the given item as string
     getItemAttr: (item, attrId, entityId, locale = 'en') ->
-        #entity = _.find(@entities, (entity) -> entity.id == entityId)
-        #entity = @itemMap.get(item.id).entity
-
         attr = @getEntity(entityId).attributes[attrId]
+        itemAttr = item[attrId]
 
         if attr.type == 'entity'
+            return '\n' if not itemAttr
+
             result = ""
-            for subitem in item[attrId]        # if attr.multi, only then item[attrId] is an array
+
+            if not attr.multi
+                itemAttr = [itemAttr]
+
+            for subitem in itemAttr
                 if attr.reference
                     subitem = @getItem subitem, attr.entity
 
                 result += @getItemAttr subitem, 'name', attr.entity, locale
 
-            return result + '\n' # TODO: maybe return a list of lines?
+            return result + '\n'
+        else unless itemAttr
+            return ' '
         else if attr.i18n
-            return (item[attrId])[locale] + ' '
+            return itemAttr[locale] + ' '
         else
-            return item[attrId] + ' '
+            return itemAttr + ' '
