@@ -53,6 +53,8 @@ export class Entities
 
     # return the attribute of the given item as string
     getItemAttr: (item, attrId, entityId, locale = 'en') ->
+        return if not item
+        
         attr = @getEntity(entityId).attributes[attrId]
         itemAttr = item[attrId]
 
@@ -71,7 +73,7 @@ export class Entities
                 result += @getItemAttr subitem, 'name', attr.entity, locale
 
             return result + '\n'
-        else unless itemAttr
+        else if !itemAttr || (attr.i18n && !itemAttr[locale])
             return ' '
         else if attr.i18n
             return itemAttr[locale] + ' '
