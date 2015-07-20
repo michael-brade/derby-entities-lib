@@ -43,8 +43,11 @@ export class Entities
     getItem: (itemId, entityId) ->
         if not entityId
             throw Error 'unimplemented'
-        else
-            return @model.root.at(entityId).get(itemId)
+
+        item = @model.root.at(entityId).get(itemId)
+        if not item
+            console.warn "item with id #{itemId} not found!"
+        return item
 
 
     # find the indexed entity with the given id
