@@ -56,14 +56,16 @@ export class Entities
 
     # return the attribute of the given item as string
     getItemAttr: (item, attrId, entityId, locale = 'en') ->
-        return if not item
-        
+        return "" if not item
+
         attr = @getEntity(entityId).attributes[attrId]
         itemAttr = item[attrId]
 
         if attr.type == 'entity'
             return '\n' if not itemAttr
 
+            # if the name of an entity is made up of other entities, don't put a comma in there
+            separator = if attrId == 'name' then " " else ", "
             result = ""
 
             if not attr.multi
@@ -74,11 +76,12 @@ export class Entities
                     subitem = @getItem subitem, attr.entity
 
                 result += @getItemAttr subitem, 'name', attr.entity, locale
+                result += separator
 
-            return result + '\n'
+            return result.slice(0, -separator.length) + '\n'
         else if !itemAttr || (attr.i18n && !itemAttr[locale])
-            return ' '
+            return ""
         else if attr.i18n
-            return itemAttr[locale] + ' '
+            return itemAttr[locale]
         else
-            return itemAttr + ' '
+            return itemAttr
