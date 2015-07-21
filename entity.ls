@@ -12,7 +12,6 @@ export class Entities
     entitiesIdx: null
 
     # This CTOR loads all given entities into the model.
-    # TODO: Could add a third parameter "entity" for a current entity?
     (model, entities) ->
         @model = model
         @entities = entities
@@ -48,6 +47,27 @@ export class Entities
         if not item
             console.warn "item with id #{itemId} not found!"
         return item
+
+    # check if this itemId is used/referenced by another item
+    #   return: list of items that reference the given id, or null if the itemId is unused
+    itemReferences: (itemId, entityId) ->
+        references = []
+        # go through all entities and their attributes and check those that match entityId
+        for , entity of @entitiesIdx
+            for , attr of entity.attributes
+                if attr.type == 'entity' and attr.entity == entityId and attr.reference
+                    _.forEach @getItems(entity.id), (item) ~>
+                        elem = item[attr.id]
+                        if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
+                            references.push {
+                                "entity": entity.id
+                                "item": @getItemAttr(item, 'name', entity.id)
+                            }
+
+        if references.length == 0
+            return null
+
+        return references
 
 
     # find the indexed entity with the given id
