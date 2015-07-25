@@ -105,3 +105,41 @@ export class Entities
             return itemAttr[locale]
         else
             return itemAttr
+
+
+    ### VALIDATION
+
+    # TODO: make it a class hierarchy: Validator::validate/accept as interface, other validators inherit it
+
+    # arguments:
+    #   id:         item id
+    #   value:      value of the attribute to validate
+    #   entityId:   entity id
+    #   locale:     if the attribute has i18n, the locale to verify
+    # return:
+    #   true if the validation is ok
+    uniqValidator = (id, value, attr, entityId, locale) ->
+        path = attr.id
+        path += "." + locale if locale
+
+        return true if not value    # TODO: only if required field?
+
+        return !_.find @getItems(entityId), (item) ->
+            item.id != id && _.isEqual(_.get(item, path), value, (a, b) -> if _.isString(a) && _.isString(b) then a.toUpperCase().trim() == b.toUpperCase().trim())
+
+
+    stringValidator = (id, value, attr, entityId, locale) ->
+        return true
+
+
+    # return the validator function for the attribute of an entity
+    getValidator: (attr, entityId, locale) ->
+        validatorFn = null
+        _this = this
+
+        if attr.id == 'name'
+            validatorFn = uniqValidator
+
+        return if not validatorFn
+
+        (id, value) -> validatorFn.call _this, id, value, attr, entityId, locale
