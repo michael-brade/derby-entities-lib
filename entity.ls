@@ -33,6 +33,24 @@ export class Entities
     getIdx: ->
         @entitiesIdx
 
+    fetchAllEntities: (cb) !->
+        queries = []
+        @entities.forEach (entity) !~>
+            queries.push @model.query(entity.id, {})
+
+        @model.fetch queries, (err) !-> cb(err)
+
+    fetchAllReferencingEntities: (entityId, cb) !->
+        entities = []
+        for , entity of @entitiesIdx
+            for , attr of entity.attributes
+                if attr.type == 'entity' and attr.entity == entityId and attr.reference
+                    entities.push entity.id
+
+        queries = _.map _.uniq(entities), (entityId) ~> @model.query(entityId, {})
+        @model.fetch queries, (err) !-> cb(err)
+
+
     # get all items of the given entity, return an array
     getItems: (entityId) ->
         @model.root.at(entityId).filter(null).get!
@@ -48,6 +66,7 @@ export class Entities
             console.warn "item with id #{itemId} not found!"
         return item
 
+
     # check if this itemId is used/referenced by another item
     #   return: list of items that reference the given id, or null if the itemId is unused
     itemReferences: (itemId, entityId) ->
@@ -61,13 +80,11 @@ export class Entities
                         if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
                             references.push {
                                 "entity": entity.id
-                                "item": @getItemAttr(item, 'name', entity.id)
+                                "item": @getItemAttr item, 'name', entity.id #,  TODO: $locale!!
                             }
 
-        if references.length == 0
-            return null
-
-        return references
+        return null if references.length == 0
+        return _.uniq references, (ref) -> ref.entity + "--" + ref.item
 
 
     # find the indexed entity with the given id
@@ -98,7 +115,7 @@ export class Entities
                 result += @getItemAttr subitem, 'name', attr.entity, locale
                 result += separator
 
-            return result.slice(0, -separator.length) + '\n'
+            return result.slice(0, -separator.length)
         else if !itemAttr || (attr.i18n && !itemAttr[locale])
             return ""
         else if attr.i18n
