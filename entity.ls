@@ -1,5 +1,6 @@
 require! {
     'lodash': _
+    path
 }
 
 # A class to accesss entities and items.
@@ -7,17 +8,39 @@ require! {
 # make it a singleton? call it Repository
 export class Entities
 
+    # private static
+
+    # public
     model: null
     entities: null
     entitiesIdx: null
+    types: {
+        text: require './types/text' .Text
+        entity: require './types/entity' .Entity
+        color: require './types/color' .Color
+    }
 
-    # This CTOR loads all given entities into the model.
-    (model, entities) ->
+
+    # CTOR
+    (app, model, entities) ->
         @model = model
         @entities = entities
         @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
             entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need deep _.clone()
             return entity.id
+
+        #@types = new Types(@app, this)
+
+        for key, type of @types
+            # load the type
+            type = @types[key] = new type(this)
+
+            # register view
+            console.log path.join __dirname, 'types', type.view
+            app.loadViews path.join __dirname, 'types', type.view
+
+
+        console.log "CTOR Entities"
 
         # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
         #   can only use model paths as arguments!
@@ -32,6 +55,11 @@ export class Entities
 
     getIdx: ->
         @entitiesIdx
+
+    # find the indexed entity with the given id
+    # TODO: call it entity
+    getEntity: (entityId) ->
+        @entitiesIdx[entityId]
 
     fetchAllEntities: (cb) !->
         queries = []
@@ -52,19 +80,30 @@ export class Entities
 
 
     # get all items of the given entity, return an array
+    # TODO: call it items
     getItems: (entityId) ->
         @model.root.at(entityId).filter(null).get!
 
 
     # Find the item of the given entity (or any entity if not) with the given ID. Needed to resolve references.
+    # TODO: call it item
     getItem: (itemId, entityId) ->
         if not entityId
             throw Error 'unimplemented'
 
         item = @model.root.at(entityId).get(itemId)
         if not item
-            console.warn "item with id #{itemId} not found!"
+            console.error "#{entityId}: no item with id #{itemId}!"
         return item
+
+    # render returns an html fragment to display this type
+    # locale != $locale!! (de, en)
+    render: (data, attribute, locale) ->
+        @types[attribute.type].render(data, attribute, locale)
+
+    # render: (type, data, parent) ->
+    #     types[type](data, parent)
+
 
 
     # check if this itemId is used/referenced by another item
@@ -74,54 +113,21 @@ export class Entities
         # go through all entities and their attributes and check those that match entityId
         for , entity of @entitiesIdx
             for , attr of entity.attributes
+                # does the current entity have an attribute that references entityId?
                 if attr.type == 'entity' and attr.entity == entityId and attr.reference
+                    # then go through all of its items and check if itemId is in it
                     _.forEach @getItems(entity.id), (item) ~>
                         elem = item[attr.id]
                         if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
                             references.push {
                                 "entity": entity.id
-                                "item": @getItemAttr item, 'name', entity.id #,  TODO: $locale!!
+                                "item": @render item.name, entity.attributes.name, 'en' #,  TODO: $locale!!
                             }
 
         return null if references.length == 0
         return _.uniq references, (ref) -> ref.entity + "--" + ref.item
 
 
-    # find the indexed entity with the given id
-    getEntity: (entityId) ->
-        @entitiesIdx[entityId]
-
-    # return the attribute of the given item as string
-    getItemAttr: (item, attrId, entityId, locale = 'en') ->
-        return "" if not item
-
-        attr = @getEntity(entityId).attributes[attrId]
-        itemAttr = item[attrId]
-
-        if attr.type == 'entity'
-            return '\n' if not itemAttr
-
-            # if the name of an entity is made up of other entities, don't put a comma in there
-            separator = if attrId == 'name' then " " else ", "
-            result = ""
-
-            if not attr.multi
-                itemAttr = [itemAttr]
-
-            for subitem in itemAttr
-                if attr.reference
-                    subitem = @getItem subitem, attr.entity
-
-                result += @getItemAttr subitem, 'name', attr.entity, locale
-                result += separator
-
-            return result.slice(0, -separator.length)
-        else if !itemAttr || (attr.i18n && !itemAttr[locale])
-            return ""
-        else if attr.i18n
-            return itemAttr[locale]
-        else
-            return itemAttr
 
 
     ### VALIDATION
