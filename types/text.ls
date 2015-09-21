@@ -1,10 +1,22 @@
+require! path
+
 export class Text
 
-    view: 'text.html'
+    name: 'text'
+    view: path.join __dirname, 'text.html'
+    #style: 'text'
 
-    render: (data, attr, locale) ->
-        # TODO needs attr itself passed in! there is no @getEntity, entityId
-        #attr = @getEntity(entityId).attributes[attrId]
+    #components: []
+
+    init: (model) !->
+        model.ref '$locale', model.root.at('$locale')
+
+
+    renderAttribute: (data, attr, locale) ->
+        @getAttribute && data ?= @getAttribute('attrData')
+        attr ?= @getAttribute('attr')
+        locale ?= @getAttribute('loc')
+        #locale ?= 'en'
 
         if !data || (attr.i18n && !data[locale])
             return ""

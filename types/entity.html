@@ -1,4 +1,18 @@
 <index:>
+    {{each items() as #subitem, #i}}
+        {{unless #i == 0}}, &sp;{{/}}
+        <view name="{{entityAttributes().name.type}}"
+              attr="{{entityAttributes().name}}"
+              attr-data="{{#subitem.name}}"
+              inherit />
+    <!-- {{else}}
+        <br> -->
+    {{/each}}
+
+<plain:>
+    {{render()}}
+
+<edit:>
     <!-- * this item could be a new item, so we cannot check for name being an object
         * each entity has to have a name attribute
     -->

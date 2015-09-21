@@ -1,9 +1,12 @@
+require! path
+
 export class Color
 
-    view: 'color.html'
+    view: path.join __dirname, 'color.html'
 
-    render: (data) -> #(data, attr, locale) ->
-        #$(parent).css("background-color", data)
-        #data
+    renderAttribute: (data, attr, locale, parent) ->
+        if parent
+            $(parent).css("background-color", data)
+            return data
 
         "<span style='background-color: #{data}'>#{data}</span>"

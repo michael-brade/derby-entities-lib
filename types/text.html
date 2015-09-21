@@ -1,2 +1,16 @@
+<!--
+    @parameters: item, attr, loc
+-->
+
 <index:>
-    <input id="{{@id}}" class="form-control" type="text" value="{{@value}}">
+    <view name="plain" />
+
+<plain:>
+    {{render()}}
+
+<edit:>
+    {{if @attr.i18n && @loc}}
+        <input id="{{@id}}" class="form-control" type="text" value="{{@item[@attr.id][@loc]}}">
+    {{else}}
+        <input id="{{@id}}" class="form-control" type="text" value="{{@item[@attr.id]}}">
+    {{/}}
