@@ -1,6 +1,6 @@
 require! {
     path
-    '../entity': Entities
+    '../api': Api
 }
 
 export class Entity
@@ -10,7 +10,6 @@ export class Entity
     # public
     view: path.join __dirname, 'entity.html'
 
-    entities: null
 
     init: (model) !->
         # needed because the passed $locale is apparently evaluated in component context (?!?)
@@ -32,11 +31,11 @@ export class Entity
 
         # LiveScript automatically returns an array of these
         for subitem in data
-            Entities.instance!.getItem subitem, attr.entity
+            Api.instance!.getItem subitem, attr.entity
 
     entityAttributes: (attr) ->
         attr ?= @getAttribute('attr')
-        Entities.instance!.getEntity(attr.entity).attributes
+        Api.instance!.getEntity(attr.entity).attributes
 
 
     # @param: data is already the attr of the item
@@ -54,13 +53,13 @@ export class Entity
         if not attr.multi
             data = [data]
 
-        nameAttr = Entities.instance!.getEntity(attr.entity).attributes.name
+        nameAttr = Api.instance!.getEntity(attr.entity).attributes.name
 
         for subitem in data
             if attr.reference
-                subitem = Entities.instance!.getItem subitem, attr.entity
+                subitem = Api.instance!.getItem subitem, attr.entity
 
-            result += Entities.instance!.renderAttribute subitem.name, nameAttr, locale
+            result += Api.instance!.renderAttribute subitem.name, nameAttr, locale
             result += separator
 
         return result.slice(0, -separator.length)
