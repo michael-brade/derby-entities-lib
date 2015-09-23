@@ -16,12 +16,13 @@ export class Entity
         model.ref '$locale', model.root.at('$locale')
 
 
-    # get all subitems -- and dereference them if needed
-    items: (data, attr) ->
-        data ?= @getAttribute('attrData')
-        return [] if not data
-
+    # get all subitems in item.attr -- and dereference them if needed
+    items: (item, attr) ->
+        item ?= @getAttribute('item')
         attr ?= @getAttribute('attr')
+
+        data = item[attr.id]
+        return [] if not data
 
         if not attr.multi
             data = [data]
@@ -33,16 +34,20 @@ export class Entity
         for subitem in data
             Api.instance!.getItem subitem, attr.entity
 
+    # get the indexed version of all attributes for this attribute's subitems
     entityAttributes: (attr) ->
         attr ?= @getAttribute('attr')
+        
         Api.instance!.getEntity(attr.entity).attributes
 
 
-    # @param: data is already the attr of the item
-    renderAttribute: (data, attr, locale) ->
-        @getAttribute && data ?= @getAttribute('attrData')
+    # get the plain text of the attr(ibute) of the given item
+    attribute: (item, attr, locale) ->
+        item ?= @getAttribute('item')
         attr ?= @getAttribute('attr')
         locale ?= @getAttribute('loc')
+
+        data = item[attr.id]
 
         return '\n' if not data
 
@@ -59,7 +64,13 @@ export class Entity
             if attr.reference
                 subitem = Api.instance!.getItem subitem, attr.entity
 
-            result += Api.instance!.renderAttribute subitem.name, nameAttr, locale
+            # TODO: use attribute here!
+            result += Api.instance!.renderAttribute subitem, nameAttr, locale
             result += separator
 
         return result.slice(0, -separator.length)
+
+
+    # render the attribute attr of item - ATM it is the plain text version
+    renderAttribute: (item, attr, locale) ->
+        @attribute ...

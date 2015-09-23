@@ -1,1 +1,26 @@
+<!--
+    @parameters: mode; id, item, attr
+-->
+
 <index:>
+    {{with @item as #item}}  <!-- BUG in Derby parsing: complex @item cannot be passed through -->
+    {{with @attr as #attr}}  <!-- BUG in Derby parsing: cannot use @attr as object index -->
+        <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do!
+             So decide here which view to take according to @mode -->
+        {{if !mode}}
+            <view name="html" inherit />
+        {{else}}
+            <!-- <view name="{{@mode}}" item="{{@item}}" />  doesn't work!-->
+            <view name="{{mode}}" inherit />
+        {{/}}
+    {{/}}{{/}}
+
+
+<text:>
+    {{item[attr.id]}}
+
+<html:>
+    <span style='background-color: {{item[attr.id]}}'>{{item[attr.id]}}</span>
+
+<edit:>
+    <input id="{{@id}}" class="form-control" type="color" value="{{#item[#attr.id]}}">

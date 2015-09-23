@@ -43,6 +43,7 @@ class SingletonWrapper
 
         types: {
             text: new (require './types/text').Text()
+            number: new (require './types/number').Number()
             entity: new (require './types/entity').Entity()
             color: new (require './types/color').Color()
         }
@@ -119,15 +120,15 @@ class SingletonWrapper
                 console.error "#{entityId}: no item with id #{itemId}!"
             return item
 
-        # render returns an html fragment to display this type
+        # render returns an html fragment to display this type.
         # locale as in [de, en, ...]
         # parent is the dom parent (optional, could be used by a type plugin)
-        renderAttribute: (data, attribute, locale, parent) ->
-            if not @types[attribute.type]
-                console.error "Entity type #{attribute.type} is not supported!"
+        renderAttribute: (item, attr, locale, parent) ->
+            if not @types[attr.type]
+                console.error "Entity type #{attr.type} is not supported!"
                 return
 
-            @types[attribute.type].renderAttribute(data, attribute, locale, parent)
+            @types[attr.type].renderAttribute(item, attr, locale, parent)
 
 
         # check if this itemId is used/referenced by another item
@@ -145,7 +146,7 @@ class SingletonWrapper
                             if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
                                 references.push {
                                     "entity": entity.id
-                                    "item": @render item.name, entity.attributes.name, 'en' #,  TODO: $locale!!
+                                    "item": @renderAttribute item, entity.attributes.name, 'en' #,  TODO: $locale!!
                                 }
 
             return null if references.length == 0

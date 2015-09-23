@@ -1,22 +1,31 @@
+<!--
+    @parameters: mode; id, item, attr, loc
+-->
+
 <index:>
+    <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do! -->
+    {{if !mode}}
+        <view name="html" inherit />
+    {{else}}
+        <view name="{{mode}}" inherit />
+    {{/}}
+
+
+
+<text:>
+    {{attribute()}}
+
+<html:>
     {{each items() as #subitem, #i}}
-        {{unless #i == 0}}, &sp;{{/}}
+        {{unless #i == 0 || attr.id == 'name'}}, &sp;{{/}}
         <view name="{{entityAttributes().name.type}}"
               attr="{{entityAttributes().name}}"
-              attr-data="{{#subitem.name}}"
+              item="{{#subitem}}"
               inherit />
     <!-- {{else}}
         <br> -->
     {{/each}}
 
-<plain:>
-    {{render()}}
-
 <edit:>
-    <!-- * this item could be a new item, so we cannot check for name being an object
-        * each entity has to have a name attribute
-    -->
-    <d-select2 id="select2-{{@field.id}}" class="form-control" fixed
-            multi="{{@field.multi}}" uniq="{{@field.uniq}}"
-            entities="{{repository.instance()}}" attribute="{{@field}}" locale="{{l($locale)}}" />
-<!-- TODO: maybe value="@value" will be needed -->
+    <d-select2 id="select2-{{@id}}" class="form-control" fixed locale="{{l($locale)}}" inherit
+        value="{{item[attr.id]}}" />
