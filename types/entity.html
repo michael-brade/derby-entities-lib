@@ -16,7 +16,7 @@
     {{attribute()}}
 
 <html:>
-    {{each items() as #subitem, #i}}
+    {{each subitems() as #subitem, #i}}
         {{unless #i == 0 || attr.id == 'name'}}, &sp;{{/}}
         <view name="{{entityAttributes().name.type}}"
               attr="{{entityAttributes().name}}"
@@ -27,5 +27,4 @@
     {{/each}}
 
 <edit:>
-    <d-select2 id="select2-{{@id}}" class="form-control" fixed locale="{{l($locale)}}" inherit
-        value="{{item[attr.id]}}" />
+    <d-select2 id="select2-{{@id}}" class="form-control" fixed locale="{{l($locale)}}" value="{{item[attr.id]}}" inherit />

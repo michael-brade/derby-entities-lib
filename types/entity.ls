@@ -15,7 +15,8 @@ export class Entity
 
     # public
     view: path.join __dirname, 'entity.html'
-
+    components:
+        require('derby-entity-select2')
 
     init: (model) !->
         # needed because the passed $locale is apparently evaluated in component context (?!?)
@@ -23,7 +24,7 @@ export class Entity
 
 
     # get all subitems in item.attr -- and dereference them if needed
-    items: (item, attr) ->
+    subitems: (item, attr) ->
         item ?= @getAttribute('item')
         attr ?= @getAttribute('attr')
 
@@ -43,7 +44,7 @@ export class Entity
     # get the indexed version of all attributes for this attribute's subitems
     entityAttributes: (attr) ->
         attr ?= @getAttribute('attr')
-        
+
         Api.instance!.getEntity(attr.entity).attributes
 
 
