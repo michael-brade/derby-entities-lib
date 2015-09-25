@@ -92,6 +92,18 @@ class SingletonWrapper
 
             @model.fetch queries, (err) !-> cb(err)
 
+
+        # query this entity as well as all dependent entites
+        queryDependentEntities: (model, entity) ->
+            console.log "models equal: ", model.root == @model
+
+            _.reduce entity.attributes, (queries, attr) ~>
+                if attr.type == 'entity'
+                    queries.push model.query(attr.entity, {})
+                return queries
+            , [model.query(entity.id, {})]
+
+
         fetchAllReferencingEntities: (entityId, cb) !->
             entities = []
             for , entity of @entitiesIdx
@@ -127,6 +139,10 @@ class SingletonWrapper
             if not @types[attr.type]
                 console.error "Entity type #{attr.type} is not supported!"
                 return
+
+            if not item
+                console.error "null item in API.renderAttribute! attr: #{attr}"
+                return ""
 
             @types[attr.type].renderAttribute(item, attr, locale, parent)
 
