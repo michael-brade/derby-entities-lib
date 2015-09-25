@@ -3,6 +3,12 @@ require! {
     '../api': Api
 }
 
+_ = {
+    uniq: require('lodash/array/uniq')
+    forEach: require('lodash/collection/forEach')
+    includes: require('lodash/collection/includes')
+}
+
 export class Entity
 
     # private static
@@ -74,3 +80,25 @@ export class Entity
     # render the attribute attr of item - ATM it is the plain text version
     renderAttribute: (item, attr, locale) ->
         @attribute ...
+
+
+    # check if this itemId is used/referenced by another item
+    #   return: list of items that reference the given id, or null if the itemId is unused
+    itemReferences: (itemId, entityId) ->
+        references = []
+        # go through all entities and their attributes and check those that match entityId
+        for , entity of Api.instance!.entitiesIdx
+            for , attr of entity.attributes
+                # does the current entity have an attribute that references entityId?
+                if attr.type == 'entity' and attr.entity == entityId and attr.reference
+                    # then go through all of its items and check if itemId is in it
+                    _.forEach Api.instance!.getItems(entity.id), (referencingItem) ~>
+                        elem = referencingItem[attr.id]
+                        if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
+                            references.push {
+                                "entity": entity
+                                "item": referencingItem
+                            }
+
+        return null if references.length == 0
+        return _.uniq references, (ref) -> ref.entity.id + "--" + ref.item.id
