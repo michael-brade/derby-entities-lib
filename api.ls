@@ -46,6 +46,7 @@ class SingletonWrapper
             number: new (require './types/number').Number()
             entity: new (require './types/entity').Entity()
             color: new (require './types/color').Color()
+            image: new (require './types/image').Image()
         }
 
 

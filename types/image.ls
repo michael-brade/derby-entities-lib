@@ -5,23 +5,41 @@ export class Image
     view: path.join __dirname, 'image.html'
 
 
-previewFile = ->
-    preview = document.querySelector('img')
-    file    = document.querySelector('input[type=file]').files[0]
-    reader  = new FileReader!
-
-    reader.onloadend = ->
-        preview.src = reader.result
+    init: (model) !->
+        model.ref '$locale', model.root.at('$locale')
 
 
-    if file
-        reader.readAsDataURL(file)
-    else
-        preview.src = ""
+    create: (model, dom) ->
+        @reader  = new FileReader!
+        @reader.onloadend = ~>
+            @imgPreview.src = @reader.result
+            @setAttribute(null, null, @reader.result)
 
 
+        @imgInput.onchange = ~>
+            imgFile = @imgInput.files[0]
+            if imgFile
+                @reader.readAsDataURL(imgFile)
+            else
+                @imgPreview.src = ""
+                @setAttribute!
 
-    # doesn't really make sense for an image, apart from dumping the db
+
+    removeImage: ->
+        @imgInput.value = ""
+        @setAttribute!
+
+
+    setAttribute: (item, attr, value) ->
+        attr ?= @getAttribute('attr')
+
+        # Derby BUG: this doesn't work!
+        #@model.set("item[attr.id]", value)
+
+        @model.at("item").set(attr.id, value)
+
+
+    # doesn't really make sense for an image, apart from maybe dumping the db
     attribute: (item, attr) ->
         item[attr.id]
 
@@ -31,6 +49,6 @@ previewFile = ->
         item ?= @getAttribute('item')
         attr ?= @getAttribute('attr')
 
-        data = item[attr.id]
+        data = item[attr.id] ? ''
 
         "<img src='#{data}' />"

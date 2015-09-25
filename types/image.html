@@ -1,4 +1,35 @@
+<!--
+    @parameters: mode; id, item, attr
+-->
+
 <index:>
-    <input id="{{@id}}" class="form-control" type="file" value="{{@value}}">
-    <!--input type="file" onchange="previewFile()"-->
-    <img id="img-{{@id}}" src="" height="200" alt="Image preview">
+    {{if !mode}}
+        <view name="html" inherit />
+    {{else}}
+        <view name="{{mode}}" inherit />
+    {{/}}
+
+
+<text:>
+    {{item[attr.id]}}
+
+<html:>
+    <img src="{{item[attr.id]}}">
+
+<!-- TODO:
+ - translate Image preview
+ - store the filename, or, at least delete it each time the img src changes
+ - make it possible to save it back to a file, i.e. download it again -->
+<edit:>
+    <div class="row">
+        <div class="col-md-4">
+            <input as="imgInput" id="{{@id}}" class="form-control" type="file">
+            <div>&nbsp;</div>
+            <button type="button" class="btn btn-default" on-click="removeImage()">
+                <i class="fa fa-times"></i> {{t($locale, "actions.removeImage")}}
+            </button>
+        </div>
+        <div class="col-md-8">
+            <img as="imgPreview" id="preview-{{@id}}" src="{{item[attr.id]}}" alt="Image preview">
+        </div>
+    </div>
