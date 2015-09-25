@@ -6,7 +6,7 @@ export class Color
 
 
     attribute: (item, attr) ->
-        item[attr.id]
+        item[attr.id] ? ""
 
 
     renderAttribute: (item, attr, locale, parent) ->
@@ -16,7 +16,7 @@ export class Color
         # parent is optional, so try to get it only in case of a component
         @getAttribute && parent ?= @getAttribute('parent')
 
-        data = item[attr.id]
+        data = item[attr.id] ? ""
 
         if parent
             $(parent).css("background-color", data)

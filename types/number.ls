@@ -6,8 +6,8 @@ export class Number
 
 
     attribute: (item, attr) ->
-        item[attr.id]
+        item[attr.id] ? ""
 
 
     renderAttribute: (item, attr, locale, parent) ->
-        item[attr.id]
+        item[attr.id] ? ""
