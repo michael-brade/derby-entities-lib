@@ -17,6 +17,7 @@ export class Entity
     view: path.join __dirname, 'entity.html'
     components:
         require('derby-entity-select2')
+        ...
 
     init: (model) !->
         # needed because the passed $locale is apparently evaluated in component context (?!?)
