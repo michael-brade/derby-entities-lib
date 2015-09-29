@@ -66,14 +66,14 @@ export class Entity
         if not attr.multi
             data = [data]
 
+        # TODO: hrm.. we need a method like renderText(item, attr...) or so
         nameAttr = Api.instance!.getEntity(attr.entity).attributes.name
 
         for subitem in data
             if attr.reference
                 subitem = Api.instance!.getItem subitem, attr.entity
 
-            # TODO: use attribute here!
-            result += Api.instance!.renderAttribute subitem, nameAttr, locale
+            result += Api.instance!.attribute subitem, nameAttr, locale
             result += separator
 
         return result.slice(0, -separator.length)
@@ -81,7 +81,30 @@ export class Entity
 
     # render the attribute attr of item - ATM it is the plain text version
     renderAttribute: (item, attr, locale) ->
-        @attribute ...
+        item ?= @getAttribute('item')
+        attr ?= @getAttribute('attr')
+        locale ?= @getAttribute('loc')
+
+        data = item[attr.id]
+
+        return '\n' if not data
+
+        # if the name of an entity is made up of other entities, don't put a comma in there
+        separator = if attr.id == 'name' then " " else ", "
+        result = ""
+
+        if not attr.multi
+            data = [data]
+
+        for subitem in data
+            if attr.reference
+                subitem = Api.instance!.getItem subitem, attr.entity
+
+            itemRendered = Api.instance!.render subitem, attr.entity, locale
+
+            result += itemRendered + separator
+
+        return result.slice(0, -separator.length)
 
 
     # check if this itemId is used/referenced by another item

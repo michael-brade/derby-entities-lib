@@ -134,6 +134,34 @@ class SingletonWrapper
                 console.error "#{entityId}: no item with id #{itemId}!"
             return item
 
+
+
+        # Render an item according to its "display" property.
+        #
+        render: (item, entityId, locale) ->
+            #if typeof entity == "Object"
+            entity = @getEntity(entityId)
+
+
+            # TODO: is this the right place for this code?
+            # Each type should have a decorate method that decorates a given string/html fragment
+            # with that attribute's content
+            if entity.display
+                attr = entity.attributes[entity.display.attribute]  # which attribute to display
+                itemRendered = @renderAttribute(item, attr, locale)
+
+                if entity.display.decorate[0] == 'color'
+                    # itemRendered = "<span style='background-color:#{subitem.color};padding:2px 0px'>#{itemRendered}</span>"
+                    "<div style='background-color:#{item.color};width:100%'>#{itemRendered}</div>"
+                else if entity.display.decorate[0] == 'image'
+                    "<div class='thumbnail'><img class='imgPreview' style='height:100px' src='#{item.image}'><div class='caption'>#{itemRendered}</div></div>"
+            else
+                # TODO: remove this, inject entity.display everywhere in API.init()
+                @renderAttribute(item, entity.attributes.name, locale)
+
+
+        # Render an attribute of an item.
+        #
         # render returns an html fragment to display this type.
         # locale as in [de, en, ...]
         # parent is the dom parent (optional, could be used by a type plugin)
