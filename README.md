@@ -54,10 +54,12 @@ entities =
 
 (not implemented yet)
 
-This property defines how to display an item of that entity:
+This property defines how to display an item of that entity if displayed as an attribute
+of another item or in a select2 dropdown. It is the summary of that item, so to speak.
 
-* `attribute` sets the main attribute of that item (currently always `name`)
+* `attribute` sets the main attribute of that item (default: `name`)
 * `decorate` adds further information, like an image, a color, or just some additional text.
+  (default: empty)
 
 
 ### Attributes
@@ -65,11 +67,11 @@ This property defines how to display an item of that entity:
 All attributes must define at least two properties: `id` and `type`.
 
 
-##### `id`
+##### `id`, type: `string`
 
 The id of the attribute to be defined. Each entity has to have one attribute with the id `name`.
 
-##### `type`
+##### `type`, type: `string`
 
 The type of the attribute, as available under `types/`.
 
@@ -78,26 +80,28 @@ The type of the attribute, as available under `types/`.
 
 Each attribute type allows for certain properties to be set.
 
-#### Color, image, number, text
+#### Color, image, number, text, textarea
 
 These types don't take any properties.
 
 
 #### Entity
 
-##### `entity`
+##### `entity`, type: `string`, default: none, mandatory
 
 The entity type of which this attribute can select its item(s) from.
 
-##### `reference`
+##### `reference`, type: `boolean`, default: `false`
+
+Should the whole item be copied into this item's attribute (`reference=false`), or should this attribute just be a reference to the other item.
 
 
-##### `multi`
+##### `multi`, type: `boolean`, default: `false`
 
 If this attribute holds just one value, set `multi` to `false`, if it holds an array of items, set
 `multi` to `true`.
 
-##### `uniq`
+##### `uniq`, type: `boolean`, default: `true`
 
 In case of `multi==true`, this determines if the same item can appear more than once (`uniq==false`), or
 if each item has to be unique.
