@@ -43,6 +43,7 @@ class SingletonWrapper
 
         types: {
             text: new (require './types/text').Text()
+            textarea: new (require './types/textarea').Textarea()
             number: new (require './types/number').Number()
             entity: new (require './types/entity').Entity()
             color: new (require './types/color').Color()

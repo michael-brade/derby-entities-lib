@@ -1,0 +1,20 @@
+<!--
+    @parameters: mode; id, item, attr, loc
+-->
+
+<index:>
+    {{if !mode}}
+        <view name="html" inherit />
+    {{else}}
+        <view name="{{mode}}" inherit />
+    {{/}}
+
+
+<plain:>
+    item[attr.id]
+
+<html:>
+    item[attr.id]
+
+<edit:>
+    <textarea id="{{@id}}" class="form-control" value="{{item[attr.id]}}" />
