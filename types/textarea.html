@@ -17,4 +17,8 @@
     item[attr.id]
 
 <edit:>
-    <textarea id="{{@id}}" class="form-control" value="{{item[attr.id]}}" />
+    {{if attr.i18n && loc}}
+        <textarea id="{{@id}}" class="form-control" value="{{item[attr.id][loc]}}" />
+    {{else}}
+        <textarea id="{{@id}}" class="form-control" value="{{item[attr.id]}}" />
+    {{/}}
