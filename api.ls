@@ -152,12 +152,44 @@ class SingletonWrapper
 
                 if entity.display.decorate[0] == 'color'
                     # itemRendered = "<span style='background-color:#{subitem.color};padding:2px 0px'>#{itemRendered}</span>"
-                    "<div style='background-color:#{item.color};width:100%'>#{itemRendered}</div>"
+                    "<span style='background-color:#{item.color};width:16px;height:16px;display:inline-block;margin-right:5px;vertical-align:text-bottom'></span><span>#{itemRendered}</span>"
                 else if entity.display.decorate[0] == 'image'
+                    # CSS for image select2 results should be:
+                    # .select2-container--bootstrap .select2-results__option {
+                    #     display: inline-block;
+                    # }
+
+                    # TODO: need to think about which is the right order:
+                    # - put decorated text in the caption (currently done), or
+                    # - put decoration for an image in the caption
                     "<div class='thumbnail'><img class='imgPreview' style='height:100px' src='#{item.image}'><div class='caption'>#{itemRendered}</div></div>"
             else
                 # TODO: remove this, inject entity.display everywhere in API.init()
                 @renderAttribute(item, entity.attributes.name, locale)
+
+        # TODO: needs a more consistent name
+        renderText: (item, entityId, locale) ->
+            entity = @getEntity(entityId)
+
+            if entity.display
+                attr = entity.attributes[entity.display.attribute]  # which attribute to display
+            else
+                attr = entity.attributes.name
+
+            @types[attr.type].attribute(item, attr, locale)
+
+
+
+        attribute:  (item, attr, locale) ->
+            if not @types[attr.type]
+                console.error "Entity type #{attr.type} is not supported!"
+                return
+
+            if not item
+                console.error "null item in API.renderAttribute! attr: #{attr}"
+                return ""
+
+            @types[attr.type].attribute(item, attr, locale, parent)
 
 
         # Render an attribute of an item.
