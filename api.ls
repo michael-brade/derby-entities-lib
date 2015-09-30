@@ -53,26 +53,23 @@ class SingletonWrapper
 
         # CTOR
         (model, entities) ->
-            # server already put it in the model - cannot use that yet because types
-            # are missing and __proto__ is Object instead of EntitiesApi
-            #if model.root.get("$entities._0")
-            #    return that
-
             @model = model.root
             @entities = entities
             @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
                 entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need deep _.clone()
                 return entity.id
 
-            # put self into the model for access (TODO: really neccessary?)
-            # this causes the circular structure: model -> entities -> model
-            ##  model.root.set '$entities._0', this
+            # put self into the model for access
+            model.root.set '$entities._0', this
 
             # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
             #   can only use model paths as arguments!
             #@model.fn 'getItems', @getItems         # "this" cannot be bound here....
             #@model.fn 'getItemName', @getItemName
 
+
+        # do not serialize the API
+        toJSON: -> undefined
 
         # TODO: call it list
         get: ->
