@@ -66,7 +66,7 @@ class SingletonWrapper
 
             # put self into the model for access (TODO: really neccessary?)
             # this causes the circular structure: model -> entities -> model
-            model.root.set '$entities._0', this
+            ##  model.root.set '$entities._0', this
 
             # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
             #   can only use model paths as arguments!
