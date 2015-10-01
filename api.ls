@@ -1,6 +1,5 @@
 require! {
     'lodash': _
-    path
 }
 
 
@@ -35,8 +34,6 @@ class SingletonWrapper
     class EntitiesApi
 
         # public
-        id: "_0"
-
         model: null
         entities: null
         entitiesIdx: null
@@ -53,6 +50,14 @@ class SingletonWrapper
 
         # CTOR
         (model, entities) ->
+            # set display defaults for all entities
+            entities.forEach (entity) ->
+                entity.display ?= {}
+                entity.display.attribute ?= 'name'
+                entity.display.layout ?= 'vertical' # TODO: implement, document
+                entity.display.decorate ?= []
+
+            # init API and index entities
             @model = model.root
             @entities = entities
             @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
@@ -62,27 +67,10 @@ class SingletonWrapper
             # put self into the model for access
             model.root.set '$entities._0', this
 
-            # ret = @model.evaluate('path arg 1', 'path arg 2', 'fnname')
-            #   can only use model paths as arguments!
-            #@model.fn 'getItems', @getItems         # "this" cannot be bound here....
-            #@model.fn 'getItemName', @getItemName
-
 
         # do not serialize the API
         toJSON: -> undefined
 
-        # TODO: call it list
-        get: ->
-            @entities
-
-        # TODO: call it map or indexed -- where is this needed at all??
-        getIdx: ->
-            @entitiesIdx
-
-        # find the indexed entity with the given id
-        # TODO: call it entity
-        getEntity: (entityId) ->
-            @entitiesIdx[entityId]
 
         fetchAllEntities: (cb) !->
             queries = []
@@ -94,8 +82,6 @@ class SingletonWrapper
 
         # query this entity as well as all dependent entites
         queryDependentEntities: (model, entity) ->
-            console.log "models equal: ", model.root == @model
-
             _.reduce entity.attributes, (queries, attr) ~>
                 if attr.type == 'entity'
                     queries.push model.query(attr.entity, {})
@@ -114,102 +100,97 @@ class SingletonWrapper
             @model.fetch queries, (err) !-> cb(err)
 
 
+        # find the indexed entity with the given id
+        entity: (entityId) ->
+            @entitiesIdx[entityId]
+
         # get all items of the given entity, return an array
-        # TODO: call it items
-        getItems: (entityId) ->
+        items: (entityId) ->
             @model.at(entityId).filter(null).get!
 
 
         # Find the item of the given entity (or any entity if not) with the given ID. Needed to resolve references.
-        # TODO: call it item
-        getItem: (itemId, entityId) ->
+        item: (itemId, entityId) ->
             if not entityId
-                throw Error 'unimplemented'
+                throw Error 'not implemented yet, entityId needs to be provided!'
 
             item = @model.at(entityId).get(itemId)
             if not item
                 console.error "#{entityId}: no item with id #{itemId}!"
+
             return item
-
-
-
-        # Render an item according to its "display" property.
-        #
-        render: (item, entityId, locale) ->
-            #if typeof entity == "Object"
-            entity = @getEntity(entityId)
-
-
-            # TODO: is this the right place for this code?
-            # Each type should have a decorate method that decorates a given string/html fragment
-            # with that attribute's content
-            if entity.display
-                attr = entity.attributes[entity.display.attribute]  # which attribute to display
-                itemRendered = @renderAttribute(item, attr, locale)
-
-                if entity.display.decorate[0] == 'color'
-                    # itemRendered = "<span style='background-color:#{subitem.color};padding:2px 0px'>#{itemRendered}</span>"
-                    "<span style='background-color:#{item.color};width:16px;height:16px;display:inline-block;margin-right:5px;vertical-align:text-bottom'></span><span>#{itemRendered}</span>"
-                else if entity.display.decorate[0] == 'image'
-                    # CSS for image select2 results should be:
-                    # .select2-container--bootstrap .select2-results__option {
-                    #     display: inline-block;
-                    # }
-
-                    # TODO: need to think about which is the right order:
-                    # - put decorated text in the caption (currently done), or
-                    # - put decoration for an image in the caption
-                    "<div class='thumbnail'><img class='imgPreview' style='height:100px' src='#{item.image}'><div class='caption'>#{itemRendered}</div></div>"
-            else
-                # TODO: remove this, inject entity.display everywhere in API.init()
-                @renderAttribute(item, entity.attributes.name, locale)
-
-        # TODO: needs a more consistent name
-        renderText: (item, entityId, locale) ->
-            entity = @getEntity(entityId)
-
-            if entity.display
-                attr = entity.attributes[entity.display.attribute]  # which attribute to display
-            else
-                attr = entity.attributes.name
-
-            @types[attr.type].attribute(item, attr, locale)
-
-
-
-        attribute:  (item, attr, locale) ->
-            if not @types[attr.type]
-                console.error "Entity type #{attr.type} is not supported!"
-                return
-
-            if not item
-                console.error "null item in API.renderAttribute! attr: #{attr}"
-                return ""
-
-            @types[attr.type].attribute(item, attr, locale, parent)
-
-
-        # Render an attribute of an item.
-        #
-        # render returns an html fragment to display this type.
-        # locale as in [de, en, ...]
-        # parent is the dom parent (optional, could be used by a type plugin)
-        renderAttribute: (item, attr, locale, parent) ->
-            if not @types[attr.type]
-                console.error "Entity type #{attr.type} is not supported!"
-                return
-
-            if not item
-                console.error "null item in API.renderAttribute! attr: #{attr}"
-                return ""
-
-            @types[attr.type].renderAttribute(item, attr, locale, parent)
 
 
         # check if this itemId is used/referenced by another item
         #   return: list of items that reference the given id, or null if the itemId is unused
         itemReferences: (itemId, entityId) ->
             @types.entity.itemReferences itemId, entityId
+
+        # render
+        #  - an item according to its "display" property if the second argument is an entityId
+        #  - an attribute of an item if the second argument is an attribute object
+        #
+        # render returns an html fragment to display this type.
+        # locale as in [de, en, ...]
+        # parent is the dom parent (optional, could be used by a type plugin)
+        render: (item, entityId_or_attr, locale, parent) ->
+            if not item
+                console.error "null item in API.render! entityId_or_attr: #{entityId_or_attr}"
+                return ""
+
+            if typeof entityId_or_attr === "string" # entityId given
+                entity = @entity entityId_or_attr
+                attr = entity.attributes[entity.display.attribute]
+            else if typeof entityId_or_attr === "object" # attr given
+                attr = entityId_or_attr
+            else
+                throw Error "render: wrong type of second argument: #{entityId_or_attr}"
+
+            if not @types[attr.type]
+                throw Error "render: entity type #{attr.type} is not supported!"
+
+            renderedAttr = @types[attr.type].renderAttribute(item, attr, locale, parent)
+
+            # TODO: is this the right place for this code?
+            # Each type should have a decorate method that decorates a given string/html fragment
+            # with that attribute's content
+            if entity?.display.decorate[0] == 'color'
+                # itemRendered = "<span style='background-color:#{subitem.color};padding:2px 0px'>#{itemRendered}</span>"
+                "<span style='background-color:#{item.color};width:16px;height:16px;display:inline-block;margin-right:5px;vertical-align:text-bottom'></span><span>#{renderedAttr}</span>"
+            else if entity?.display.decorate[0] == 'image'
+                # CSS for image select2 results should be:
+                # .select2-container--bootstrap .select2-results__option {
+                #     display: inline-block;
+                # }
+
+                # TODO: need to think about which is the right order:
+                # - put decorated text in the caption (currently done), or
+                # - put decoration for an image in the caption
+                "<div class='thumbnail'><img class='imgPreview' style='height:100px' src='#{item.image}'><div class='caption'>#{renderedAttr}</div></div>"
+            else
+                renderedAttr
+
+
+        # render an item or attribute as plain text. See render() for argument explanation.
+        renderAsText: (item, entityId_or_attr, locale) ->
+            if not item
+                console.error "null item in API.renderAsText! entityId_or_attr: #{entityId_or_attr}"
+                return ""
+
+            if typeof entityId_or_attr === "string" # entityId given
+                entity = @entity entityId_or_attr
+                attr = entity.attributes[entity.display.attribute]
+            else if typeof entityId_or_attr === "object" # attr given
+                attr = entityId_or_attr
+            else
+                throw Error "renderAsText: wrong type of second argument: #{entityId_or_attr}"
+
+            if not @types[attr.type]
+                throw Error "renderAsText: entity type #{attr.type} is not supported!"
+
+            renderedAttr = @types[attr.type].attribute(item, attr, locale)
+
+            # TODO: decoration needs to be applied
 
 
 
@@ -230,7 +211,7 @@ class SingletonWrapper
 
             return true if not value    # TODO: only if required field?
 
-            return !_.find @getItems(entityId), (item) ->
+            return !_.find @items(entityId), (item) ->
                 item.id != id && _.isEqual(_.get(item, path), value, (a, b) -> if _.isString(a) && _.isString(b) then a.toUpperCase().trim() == b.toUpperCase().trim())
 
 

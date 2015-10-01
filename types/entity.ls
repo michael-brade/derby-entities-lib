@@ -40,13 +40,13 @@ export class Entity
 
         # LiveScript automatically returns an array of these
         for subitem in data
-            Api.instance!.getItem subitem, attr.entity
+            Api.instance!.item subitem, attr.entity
 
     # get the indexed version of all attributes for this attribute's subitems
     entityAttributes: (attr) ->
         attr ?= @getAttribute('attr')
 
-        Api.instance!.getEntity(attr.entity).attributes
+        Api.instance!.entity(attr.entity).attributes
 
 
     # get the plain text of the attr(ibute) of the given item
@@ -66,21 +66,18 @@ export class Entity
         if not attr.multi
             data = [data]
 
-        # TODO: hrm.. we need a method like renderText(item, attr...) or so
-        nameAttr = Api.instance!.getEntity(attr.entity).attributes.name
-
         for subitem in data
             if attr.reference
-                subitem = Api.instance!.getItem subitem, attr.entity
+                subitem = Api.instance!.item subitem, attr.entity
 
-            result += Api.instance!.attribute subitem, nameAttr, locale
+            result += Api.instance!.renderAsText subitem, attr.entity, locale
             result += separator
 
         return result.slice(0, -separator.length)
 
 
-    # render the attribute attr of item - ATM it is the plain text version
-    renderAttribute: (item, attr, locale) ->
+    # render the attribute attr of item
+    renderAttribute: (item, attr, locale, parent) ->
         item ?= @getAttribute('item')
         attr ?= @getAttribute('attr')
         locale ?= @getAttribute('loc')
@@ -98,13 +95,15 @@ export class Entity
 
         for subitem in data
             if attr.reference
-                subitem = Api.instance!.getItem subitem, attr.entity
+                subitem = Api.instance!.item subitem, attr.entity
 
-            itemRendered = Api.instance!.render subitem, attr.entity, locale
-
-            result += itemRendered + separator
+            result += Api.instance!.render subitem, attr.entity, locale, parent
+            result += separator
 
         return result.slice(0, -separator.length)
+
+    # TODO: probably need a  _render: (item, attr, locale, parent, escape) method to share code above
+
 
 
     # check if this itemId is used/referenced by another item
@@ -117,7 +116,7 @@ export class Entity
                 # does the current entity have an attribute that references entityId?
                 if attr.type == 'entity' and attr.entity == entityId and attr.reference
                     # then go through all of its items and check if itemId is in it
-                    _.forEach Api.instance!.getItems(entity.id), (referencingItem) ~>
+                    _.forEach Api.instance!.items(entity.id), (referencingItem) ~>
                         elem = referencingItem[attr.id]
                         if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
                             references.push {
