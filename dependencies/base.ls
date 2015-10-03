@@ -1,6 +1,6 @@
 require! {
     'lodash': _
-    '../entity': { Entities }
+    '../api': EntitiesApi
 }
 
 # Numbers: there are T entity types and E(type) entity items for each type.
@@ -19,19 +19,19 @@ require! {
 #
 export class EntityDependencies
 
-    model: null
-    entities: null
+    model: null # I don't actually need the model in here....?!
+    api: null
     itemMap: null
     ranges: null
     rangeCur: 0
 
     # CTOR
-    (model, entities) ->
+    (model) ->
         if (@constructor == EntityDependencies)
              throw new Error("Can't instantiate abstract class!");
 
         @model = model
-        @entities = new Entities(model, entities)
+        @api = EntitiesApi.instance!
 
         # entityId -> range object
         @ranges = new Map()
@@ -41,11 +41,8 @@ export class EntityDependencies
 
     init: ->
         # for each entity... (@entities is an array)
-        for let key, entity of @entities.getIdx!
-            items = @entities.getItems(entity.id)
-
-            console.log "entity: ", entity
-            console.log "items: ", items
+        for let key, entity of @api.entitiesIdx
+            items = @api.items(entity.id)
 
             @addRange entity.id, items.length  # entity.id is the name like "bijas"
 
@@ -62,7 +59,7 @@ export class EntityDependencies
 
                 # ...and find their dependencies
                 for let attrId, attr of entity.attributes
-                    for let id in @getAllDependencyIds(item, attr)
+                    for let id in @allDependencyIds(item, attr)
                         @addDependency item.id, id
 
     # adds a dependency to the matrix
@@ -83,7 +80,7 @@ export class EntityDependencies
 
     # store the range for each entity
     addRange: (entityId, count) !->
-        console.log "range for #{entityId} is #{@rangeCur} - #{@rangeCur + count}"
+        # console.log "range for #{entityId} is #{@rangeCur} - #{@rangeCur + count}"
         @ranges.set entityId, { from: @rangeCur, to: @rangeCur + count }
         @rangeCur += count
 
@@ -94,7 +91,7 @@ export class EntityDependencies
 
 
     # get all dependency ids for this item
-    getAllDependencyIds: (item, attr) ->
+    allDependencyIds: (item, attr) ->
         ids = []
 
         if attr.type != 'entity' or not item[attr.id]

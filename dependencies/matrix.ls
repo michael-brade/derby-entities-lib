@@ -16,23 +16,24 @@ require 'array.from'
 # }
 export class DependencyMatrix extends EntityDependencies
 
-    (model, entities) ->
+    (model) ->
         super ...
         @matrix = @model.at '_dependencyIdMatrix'   # first create matrix because init() calls @addDependency()
-        @init!
 
 
     # adds a dependency to the matrix
     addDependency: (sourceId, dependencyId) ->
-        console.log "dependency: #{sourceId} -> #{dependencyId}"
+        # console.log "dependency: #{sourceId} -> #{dependencyId}"
 
         @matrix.push sourceId, dependencyId
 
-    # return the matrix
+    # create and return the matrix
     data: ->
+        @init!
+
         # TODO: there is an easier way - use a direct loop and .push the item name to itemNames
         itemNames = _.map Array.from(@itemMap.values!), (v) ~>
-            @entities.getItemAttr v.item, 'name', v.entity.id # TODO: locale!
+            @api.renderAsText v.item, v.entity.id, 'en' # TODO: locale!
 
         # create matrix
         matrix = []
