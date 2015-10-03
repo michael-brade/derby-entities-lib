@@ -1,13 +1,8 @@
-require! path
+require! {
+    './type': { Type }
+}
 
-export class Number
+export class Number extends Type
 
-    view: path.join __dirname, 'number.html'
-
-
-    attribute: (item, attr) ->
-        item[attr.id] ? ""
-
-
-    renderAttribute: (item, attr, locale, parent) ->
-        item[attr.id] ? ""
+    renderAttribute: (data, attr, locale, parent) ->
+        data

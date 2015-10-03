@@ -1,6 +1,6 @@
 require! {
-    path
     '../api': Api
+    './type': { Type }
 }
 
 _ = {
@@ -9,19 +9,14 @@ _ = {
     includes: require('lodash/collection/includes')
 }
 
-export class Entity
+export class Entity extends Type
 
     # private static
 
     # public
-    view: path.join __dirname, 'entity.html'
     components:
         require('derby-entity-select2')
         ...
-
-    init: (model) !->
-        # needed because the passed $locale is apparently evaluated in component context (?!?)
-        model.ref '$locale', model.root.at('$locale')
 
 
     # get all subitems in item.attr -- and dereference them if needed
@@ -50,13 +45,7 @@ export class Entity
 
 
     # get the plain text of the attr(ibute) of the given item
-    attribute: (item, attr, locale) ->
-        item ?= @getAttribute('item')
-        attr ?= @getAttribute('attr')
-        locale ?= @getAttribute('loc')
-
-        data = item[attr.id]
-
+    attribute: (data, attr, locale) ->
         return '\n' if not data
 
         # if the name of an entity is made up of other entities, don't put a comma in there
@@ -77,13 +66,7 @@ export class Entity
 
 
     # render the attribute attr of item
-    renderAttribute: (item, attr, locale, parent) ->
-        item ?= @getAttribute('item')
-        attr ?= @getAttribute('attr')
-        locale ?= @getAttribute('loc')
-
-        data = item[attr.id]
-
+    renderAttribute: (data, attr, locale, parent) ->
         return '\n' if not data
 
         # if the name of an entity is made up of other entities, don't put a comma in there
