@@ -72,32 +72,24 @@ class SingletonWrapper
         toJSON: -> undefined
 
 
-        fetchAllEntities: (cb) !->
-            queries = []
-            @entities.forEach (entity) !~>
-                queries.push @model.query(entity.id, {})
-
-            @model.fetch queries, (err) !-> cb(err)
-
-
-        # query this entity as well as all dependent entites
-        queryDependentEntities: (model, entity) ->
+        # create array of queries for this entity as well as all dependent entites
+        queryDependentEntities: (entity) ->
             _.reduce entity.attributes, (queries, attr) ~>
                 if attr.type == 'entity'
-                    queries.push model.query(attr.entity, {})
+                    queries.push @model.query(attr.entity, {})
                 return queries
-            , [model.query(entity.id, {})]
+            , [@model.query(entity.id, {})]
 
 
-        fetchAllReferencingEntities: (entityId, cb) !->
+        # create array of queries for all entities referencing the given entity
+        queryReferencingEntities: (entityId) ->
             entities = []
             for , entity of @entitiesIdx
                 for , attr of entity.attributes
                     if attr.type == 'entity' and attr.entity == entityId and attr.reference
                         entities.push entity.id
 
-            queries = _.map _.uniq(entities), (entityId) ~> @model.query(entityId, {})
-            @model.fetch queries, (err) !-> cb(err)
+            _.map _.uniq(entities), (entityId) ~> @model.query(entityId, {})
 
 
         # find the indexed entity with the given id
