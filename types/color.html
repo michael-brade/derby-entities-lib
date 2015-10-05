@@ -21,7 +21,8 @@
     {{item[attr.id]}}
 
 <:html:>
-    <span style='background-color: {{item[attr.id]}}'>{{item[attr.id]}}</span>
+    <span class="color" style="background-color:{{item[attr.id]}}"></span>
+    <span>{{item[attr.id]}}</span>
 
 <:edit:>
     <input id="{{@id}}" class="form-control" type="color" value="{{#item[#attr.id]}}">

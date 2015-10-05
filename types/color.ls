@@ -4,9 +4,13 @@ require! {
 
 export class Color extends Type
 
+    style: __dirname + "/color"
+
+
     renderAttribute: (data, attr, locale, parent) ->
         if parent
             $(parent).css("background-color", data)
             return data
 
-        "<span style='background-color: #{data}'>#{data}</span>"
+        "<span class='color' style='background-color:#{data}'></span>
+        <span>#{data}</span>"
