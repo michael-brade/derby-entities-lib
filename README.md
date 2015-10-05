@@ -1,7 +1,7 @@
 # Derby Entities Library
 
 This library reads the entity schema definition and provides the API to access entities and their items.
-It is the base library for [derby-entity](TODO).
+It is the base library for [derby-entity](https://github.com/michael-brade/derby-entity).
 
 
 ## Terminology
@@ -117,15 +117,32 @@ Maybe I will add a `validation` property to an attribute...
 
 ### Adding new Attribute Type Definitions
 
+Right now, each attribute type consists of a controller (written in JavaScript/LiveScript/whatever) and a Derby view.
+It is, in effect, a Derby component.
+
+
+#### Controller
+
 Each type class has to provide the following methods:
 
 - `attribute: (item, attr, locale) ->`
+
+    This returns the `item`'s attribute `attr` as plain text in the given `locale`.
+
 - `renderAttribute: (item, attr, locale, parent) ->`
+
+    This returns the `item`'s attribute `attr` as html in the given `locale`.
+
+If the type extends the class `Type`, then `attribute` is optional, and instead of the whole `item`, just its attribute is provided as `data`. This is just so that some common boilerplate can be avoided.
+
+
+#### View
 
 The component view takes a parameter `mode`, which can be either `text`, `html`, or `edit`, and that determines
 if the view should output plain text or html, or if the editor for that attribute should be rendered.
 
-Consequently, each component should define three subviews: `<text:>`, `<html:>`, and `<edit:>`.
+Consequently, each component should define three subviews: `<:text:>`, `<:html:>`, and `<:edit:>`. There is a leading
+colon to make sure that views don't get confused with components, like `entity:text` vs `text`.
 
 A type finally has to be registered in `EntitiesApi` (api.ls).
 

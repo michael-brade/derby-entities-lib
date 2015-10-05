@@ -1,0 +1,23 @@
+{
+  "name": "derby-entities-lib",
+  "version": "1.0.0",
+  "description": "Base library for derby-entity CRUD component and derby-entities-visualizations",
+  "main": "api.ls",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michael-brade/derby-entities-lib.git"
+  },
+  "keywords": [
+    "derby",
+    "entity"
+  ],
+  "author": "Michael Brade",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michael-brade/derby-entities-lib/issues"
+  },
+  "homepage": "https://github.com/michael-brade/derby-entities-lib#readme"
+}
