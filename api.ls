@@ -148,7 +148,7 @@ class SingletonWrapper
             # with that attribute's content
             if entity?.display.decorate[0] == 'color'
                 # itemRendered = "<span style='background-color:#{subitem.color};padding:2px 0px'>#{itemRendered}</span>"
-                "<span style='background-color:#{item.color};width:16px;height:16px;display:inline-block;margin-right:5px;vertical-align:text-bottom'></span><span>#{renderedAttr}</span>"
+                "<span class='color' style='background-color:#{item.color}'></span><span>#{renderedAttr}</span>"
             else if entity?.display.decorate[0] == 'image'
                 # CSS for image select2 results should be:
                 # .select2-container--bootstrap .select2-results__option {

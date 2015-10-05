@@ -1,0 +1,14 @@
+.img-preview {
+    max-height: 100px;
+}
+
+.thumbnail {
+    display: inline-block;
+    margin-bottom: 0;
+
+}
+
+.caption {
+    padding: 5px;
+    text-align: center;
+}

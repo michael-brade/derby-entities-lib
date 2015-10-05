@@ -4,7 +4,7 @@ require! {
 
 export class Image extends Type
 
-    # view: path.join __dirname, 'image.html'
+    style: __dirname + "/color"
 
 
     create: (model, dom) ->
