@@ -8,6 +8,8 @@ export class Image extends Type
 
 
     create: (model, dom) ->
+        return if @getAttribute('mode') != 'edit'
+
         @reader  = new FileReader!
         @reader.onloadend = ~>
             @imgPreview.src = @reader.result
