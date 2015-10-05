@@ -3,20 +3,20 @@
 -->
 
 <index:>
-    {{if !mode}}
-        <view name="html" inherit />
+    {{if !@mode}}
+        <view name=":html" inherit />
     {{else}}
-        <view name="{{mode}}" inherit />
+        <view name=":{{@mode}}" inherit />
     {{/}}
 
 
-<plain:>
+<:text:>
     item[attr.id]
 
-<html:>
+<:html:>
     item[attr.id]
 
-<edit:>
+<:edit:>
     {{if attr.i18n && loc}}
         <textarea id="{{@id}}" class="form-control" value="{{item[attr.id][loc]}}" />
     {{else}}

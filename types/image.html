@@ -3,24 +3,24 @@
 -->
 
 <index:>
-    {{if !mode}}
-        <view name="html" inherit />
+    {{if !@mode}}
+        <view name=":html" inherit />
     {{else}}
-        <view name="{{mode}}" inherit />
+        <view name=":{{@mode}}" inherit />
     {{/}}
 
 
-<text:>
+<:text:>
     {{item[attr.id]}}
 
-<html:>
+<:html:>
     <img src="{{item[attr.id]}}">
 
 <!-- TODO:
  - translate Image preview
  - store the filename, or, at least delete it each time the img src changes
  - make it possible to save it back to a file, i.e. download it again -->
-<edit:>
+<:edit:>
     <div class="row">
         <div class="col-md-4">
             <input as="imgInput" id="{{@id}}" class="form-control" type="file">

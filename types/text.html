@@ -4,22 +4,20 @@
 
 <index:>
     <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do! -->
-    {{if !mode}}
-        <view name="html" inherit />
+    {{if !@mode}}
+        <view name=":html" inherit />
     {{else}}
-        <!-- <view name="{{@mode}}" inherit />  doesn't work!-->
-        <!-- <view name="{{@mode}}" item="{{@item}}" />  doesn't work!-->
-        <view name="{{mode}}" inherit />
+        <view name=":{{@mode}}" inherit />
     {{/}}
 
 
-<plain:>
+<:text:>
     {{attribute()}}
 
-<html:>
+<:html:>
     {{renderAttribute()}}
 
-<edit:>
+<:edit:>
     {{if attr.i18n && loc}}
         <!-- for the id attribute we have to use @id because id is the component's controller id -->
         <input id="{{@id}}" class="form-control" type="text" value="{{item[attr.id][loc]}}">

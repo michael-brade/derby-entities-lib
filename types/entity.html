@@ -4,20 +4,22 @@
 
 <index:>
     <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do! -->
-    {{if !mode}}
-        <view name="html" inherit />
+    {{if !@mode}}
+        <view name=":html" inherit />
     {{else}}
-        <view name="{{mode}}" inherit />
+        <view name=":{{@mode}}" inherit />
     {{/}}
 
 
 
-<text:>
+<:text:>
     {{attribute()}}
 
-<html:>
+<:html:>
     {{each subitems() as #subitem, #i}}
         {{unless #i == 0 || attr.id == 'name'}}, &sp;{{/}}
+
+        <!-- TODO: this should properly use the display: property - need to create a new view... -->
         <view name="{{entityAttributes().name.type}}"
               attr="{{entityAttributes().name}}"
               item="{{#subitem}}"
@@ -26,5 +28,5 @@
         <br> -->
     {{/each}}
 
-<edit:>
+<:edit:>
     <d-select2 id="select2-{{@id}}" class="form-control" fixed locale="{{l($locale)}}" value="{{item[attr.id]}}" inherit />
