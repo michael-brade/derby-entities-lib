@@ -1,0 +1,73 @@
+<!--
+    @parameters: mode, item, entity
+-->
+
+<index:>
+    {{with @item as #item}}
+        <view name="-{{@mode}}" inherit />
+    {{/}}
+
+
+<-text:>
+    {{alert("TODO")}}
+
+<!-- this is a little bit inconsistent... maybe call this display and make html render the whole item? -->
+<-html:>
+    <view name="-decorate" current="{{0}}" inherit>
+        <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
+    </view>
+
+<-decorate:>
+    {{if decorations(@current)}}
+        <view name="-decorate" current="{{@current + 1}}" inherit>
+            <view name="{{decorations(@current).type}}" item="{{#item}}" attr="{{decorations(@current)}}" inherit>
+                {{@content}}
+            </view>
+        </view>
+    {{else}}
+        {{@content}}
+    {{/}}
+
+
+<-edit:>
+    <form as="form" role="form" class="well form-horizontal" on-submit="done(this)">
+        {{each entity.attributes as #field}}
+            {{if #field.i18n}}
+                {{each $locale.supported as #loc}}
+                    <fieldgroup id="{{#field.id}}_{{#loc}}" label="{{t($locale, entity.id + '.' + #field.id)}} ({{#loc}})">
+                        <view id="{{#field.id}}_{{#loc}}" name="{{#field.type}}" mode="edit"
+                            item="{{#item}}" attr="{{#field}}" loc="{{#loc}}" inherit />
+                    </fieldgroup>
+                {{/}}
+            {{else}}
+                <!-- this is called twice upon changing the input! WHY?? -->
+                <!-- {{console.log("render field: ", #field, _page.item[#field.id])}} -->
+                <fieldgroup id="{{#field.id}}" label="{{t($locale, entity.id + '.' + #field.id)}}">
+                    <view id="{{#field.id}}" name="{{#field.type}}" mode="edit"
+                        item="{{#item}}" attr="{{#field}}" inherit />
+                </fieldgroup>
+            {{/}}
+        {{/each}}
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary">{{t($locale, 'actions.done')}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+<!-- Arguments: id, label, type, value -->
+<fieldgroup: element="fieldgroup">
+    {{with @id as #id}} <!-- BUG in Derby parsing: "if !$validation.form[@id]" doesn't work! -->
+        <div class="form-group {{if $validation.form[#id] === false}}has-error{{/}}">
+            <label for="{{#id}}" class="col-sm-2 control-label">
+                {{@label}}
+            </label>
+            <div class="col-md-10">
+                {{@content}}
+            </div>
+        </div>
+    {{/}}
