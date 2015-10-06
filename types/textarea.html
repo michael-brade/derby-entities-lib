@@ -30,14 +30,18 @@
     {{/}}
 
 <-edit:>
-    <!-- Another BUG in Derby: binding to a textarea doesn't work! -->
     {{if #attr.i18n}}
         {{if loc}}
-            <input id="{{@id}}" class="form-control" type="text" value="{{#item[#attr.id][loc]}}" />
-            <!-- <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id][loc]}}" /> -->
+            <textarea id="{{@id}}" class="form-control">
+                {{#item[#attr.id][loc]}}
+            </textarea>
         {{else}}
-            <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id][l($locale)]}}" />
+            <textarea id="{{@id}}" class="form-control">
+                {{#item[#attr.id][l($locale)]}}
+            </textarea>
         {{/}}
     {{else}}
-        <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id]}}" />
+        <textarea id="{{@id}}" class="form-control">
+            {{#item[#attr.id]}}
+        </textarea>
     {{/}}
