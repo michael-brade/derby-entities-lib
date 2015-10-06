@@ -123,9 +123,8 @@ class SingletonWrapper
         #  - an attribute of an item if the second argument is an attribute object
         #
         # render returns an html fragment to display this type.
-        # locale as in [de, en, ...]
         # parent is the dom parent (optional, could be used by a type plugin)
-        render: (item, entityId_or_attr, locale, parent) ->
+        render: (item, entityId_or_attr, parent) ->
             if not item
                 console.error "null item in API.render! entityId_or_attr: #{entityId_or_attr}"
                 return ""
@@ -140,6 +139,8 @@ class SingletonWrapper
 
             if not @types[attr.type]
                 throw Error "render: entity type #{attr.type} is not supported!"
+
+            locale = @model.get("$controller").l(@model.get("$locale"))
 
             renderedAttr = @types[attr.type].renderAttribute(item, attr, locale, parent)
 
@@ -164,7 +165,7 @@ class SingletonWrapper
 
 
         # render an item or attribute as plain text. See render() for argument explanation.
-        renderAsText: (item, entityId_or_attr, locale) ->
+        renderAsText: (item, entityId_or_attr) ->
             if not item
                 console.error "null item in API.renderAsText! entityId_or_attr: #{entityId_or_attr}"
                 return ""
@@ -179,6 +180,8 @@ class SingletonWrapper
 
             if not @types[attr.type]
                 throw Error "renderAsText: entity type #{attr.type} is not supported!"
+
+            locale = @model.get("$controller").l(@model.get("$locale"))
 
             renderedAttr = @types[attr.type].attribute(item, attr, locale)
 
