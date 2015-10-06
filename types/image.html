@@ -3,24 +3,33 @@
 -->
 
 <index:>
-    {{if !@mode}}
-        <view name=":html" inherit />
-    {{else}}
-        <view name=":{{@mode}}" inherit />
+    {{with @item as #item}}  <!-- BUG in Derby parsing: complex @item cannot be passed through -->
+    {{with @attr as #attr}}  <!-- BUG in Derby parsing: cannot use @attr as object index -->
+        <view name="-{{@mode}}" inherit />
+    {{/}}
     {{/}}
 
 
-<:text:>
-    {{item[attr.id]}}
+<-text:>
+    {{#item[#attr.id]}}
 
-<:html:>
-    <img src="{{item[attr.id]}}">
+<-html:>
+    {{if @content}}
+        <!-- decorate @content with the image -->
+        <div class='thumbnail'>
+            <img class='imgPreview' src="{{#item[#attr.id]}}" />
+            <div class='caption'>{{@content}}</div>
+        </div>
+    {{else}}
+        <img src="{{#item[#attr.id]}}">
+    {{/}}
+
 
 <!-- TODO:
  - translate Image preview
  - store the filename, or, at least delete it each time the img src changes
  - make it possible to save it back to a file, i.e. download it again -->
-<:edit:>
+<-edit:>
     <div class="row">
         <div class="col-md-4">
             <input as="imgInput" id="{{@id}}" class="form-control" type="file">
@@ -30,6 +39,6 @@
             </button>
         </div>
         <div class="col-md-8">
-            <img as="imgPreview" id="preview-{{@id}}" src="{{item[attr.id]}}" alt="Image preview">
+            <img as="imgPreview" id="preview-{{@id}}" src="{{#item[#attr.id]}}" alt="Image preview">
         </div>
     </div>

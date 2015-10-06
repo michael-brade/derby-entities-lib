@@ -21,9 +21,6 @@ export class Entity extends Type
 
     # get all subitems in item.attr -- and dereference them if needed
     subitems: (item, attr) ->
-        item ?= @getAttribute('item')
-        attr ?= @getAttribute('attr')
-
         data = item[attr.id]
         return [] if not data
 
@@ -39,8 +36,6 @@ export class Entity extends Type
 
     # get the indexed version of all attributes for this attribute's subitems
     entityAttributes: (attr) ->
-        attr ?= @getAttribute('attr')
-
         Api.instance!.entity(attr.entity).attributes
 
 

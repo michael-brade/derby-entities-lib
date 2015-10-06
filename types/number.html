@@ -3,18 +3,16 @@
 -->
 
 <index:>
-    {{if !@mode}}
-        <view name=":html" inherit />
-    {{else}}
-        <view name=":{{@mode}}" inherit />
-    {{/}}
+    {{with @item as #item}}{{with @attr as #attr}}
+        <view name="-{{@mode}}" inherit />
+    {{/}}{{/}}
 
 
-<:text:>
-    item[attr.id]
+<-text:>
+    {{#item[#attr.id]}}
 
-<:html:>
-    item[attr.id]
+<-html:>
+    {{#item[#attr.id]}}
 
-<:edit:>
-    <input id="{{@id}}" class="form-control" type="number" value="{{item[attr.id]}}">
+<-edit:>
+    <input id="{{@id}}" class="form-control" type="number" value="{{#item[#attr.id]}}">

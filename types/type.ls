@@ -27,11 +27,6 @@ export class Type
 
 
     function attribute(_attribute, item, attr, locale)
-        # if the arguments aren't given, take them from the model
-        item ?= @getAttribute('item')
-        attr ?= @getAttribute('attr')
-        locale ?= @getAttribute('loc')
-
         data = @attributeI18n item[attr.id] ? "", attr, locale
 
         # the implementation of @attribute in subclasses is optional
@@ -41,13 +36,6 @@ export class Type
             data
 
     function renderAttribute(_renderAttribute, item, attr, locale, parent)
-        # if the arguments aren't given, take them from the model
-        item ?= @getAttribute('item')
-        attr ?= @getAttribute('attr')
-        locale ?= @getAttribute('loc')
-        # parent is optional, so try to get it only in case of a component
-        @getAttribute && parent ?= @getAttribute('parent')
-
         data = @escapeMarkup @attributeI18n item[attr.id] ? "", attr, locale
 
         _renderAttribute data, attr, locale, parent

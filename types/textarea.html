@@ -3,22 +3,41 @@
 -->
 
 <index:>
-    {{if !@mode}}
-        <view name=":html" inherit />
+    {{with @item as #item}}{{with @attr as #attr}}
+        <view name="-{{@mode}}" inherit />
+    {{/}}{{/}}
+
+
+<-text:>
+    {{if #attr.i18n}}
+        {{#item[#attr.id][l($locale)]}}
     {{else}}
-        <view name=":{{@mode}}" inherit />
+        {{#item[#attr.id]}}
     {{/}}
 
-
-<:text:>
-    item[attr.id]
-
-<:html:>
-    item[attr.id]
-
-<:edit:>
-    {{if attr.i18n && loc}}
-        <textarea id="{{@id}}" class="form-control" value="{{item[attr.id][loc]}}" />
+<-html:>
+    {{if @content}}
+        <div class="row">
+            <div class="col-md-4">
+                <strong>{{@content}}</strong>
+            </div>
+            <div class="col-md-8">
+                <view name="-text" inherit />
+            </div>
+        </div>
     {{else}}
-        <textarea id="{{@id}}" class="form-control" value="{{item[attr.id]}}" />
+        <view name="-text" inherit />
+    {{/}}
+
+<-edit:>
+    <!-- Another BUG in Derby: binding to a textarea doesn't work! -->
+    {{if #attr.i18n}}
+        {{if loc}}
+            <input id="{{@id}}" class="form-control" type="text" value="{{#item[#attr.id][loc]}}" />
+            <!-- <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id][loc]}}" /> -->
+        {{else}}
+            <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id][l($locale)]}}" />
+        {{/}}
+    {{else}}
+        <textarea id="{{@id}}" class="form-control" value="{{#item[#attr.id]}}" />
     {{/}}
