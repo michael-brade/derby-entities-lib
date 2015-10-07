@@ -57,6 +57,10 @@ class SingletonWrapper
                 entity.display.layout ?= 'vertical' # TODO: implement, document
                 entity.display.decorate ?= []
 
+                entity.attributes.forEach (attr) ->
+                    attr.type ?= "text"
+
+
             # init API and index entities
             @model = model.root
             @entities = entities
