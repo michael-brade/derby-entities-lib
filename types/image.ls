@@ -4,7 +4,7 @@ require! {
 
 export class Image extends Type
 
-    style: __dirname + "/color"
+    style: __dirname + "/image"
 
 
     create: (model, dom) ->
