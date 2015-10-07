@@ -1,0 +1,40 @@
+/* see http://alistapart.com/article/expanding-text-areas-made-elegant/ */
+
+.expandingTextarea {
+    position: relative;
+}
+.expandingTextarea > textarea,
+.expandingTextarea > pre {
+    /* Make the text soft-wrap */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+    /* TODO set the font here of textarea AND pre to bootstrap fonts! use sass! */ 
+}
+.expandingTextarea > textarea {
+    /* The border-box box model is used to allow
+     * padding whilst still keeping the overall width
+     * at exactly that of the containing element.
+     */
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.expandingTextarea.active > textarea {
+    /* Hide any scrollbars */
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    /* Remove WebKit user-resize widget */
+    resize: none;
+}
+.expandingTextarea > pre {
+    display: none;
+}
+.expandingTextarea.active > pre {
+    display: block;
+    /* Hide the text; just using it for sizing */
+    visibility: hidden;
+}

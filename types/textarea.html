@@ -9,11 +9,7 @@
 
 
 <-text:>
-    {{if #attr.i18n}}
-        {{#item[#attr.id][l($locale)]}}
-    {{else}}
-        {{#item[#attr.id]}}
-    {{/}}
+    {{text}}
 
 <-html:>
     {{if @content}}
@@ -30,18 +26,11 @@
     {{/}}
 
 <-edit:>
-    {{if #attr.i18n}}
-        {{if loc}}
-            <textarea id="{{@id}}" class="form-control">
-                {{#item[#attr.id][loc]}}
-            </textarea>
-        {{else}}
-            <textarea id="{{@id}}" class="form-control">
-                {{#item[#attr.id][l($locale)]}}
-            </textarea>
-        {{/}}
-    {{else}}
+    <!-- expanding text area trick -->
+    <div as="expandingTextarea" class="expandingTextarea">
+        <pre><span>{{text}}</span><br></pre>
+
         <textarea id="{{@id}}" class="form-control">
-            {{#item[#attr.id]}}
+            {{text}}
         </textarea>
-    {{/}}
+    </div>
