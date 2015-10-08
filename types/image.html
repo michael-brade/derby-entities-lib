@@ -3,25 +3,22 @@
 -->
 
 <index:>
-    {{with @item as #item}}  <!-- BUG in Derby parsing: complex @item cannot be passed through -->
-    {{with @attr as #attr}}  <!-- BUG in Derby parsing: cannot use @attr as object index -->
-        <view name="-{{@mode}}" inherit />
-    {{/}}
-    {{/}}
+    <view name="-{{@mode}}" inherit />
 
 
 <-text:>
-    {{#item[#attr.id]}}
+    {{item[attr.id]}}
 
 <-html:>
     {{if @content}}
+        <!-- {{console.log("got something to decorate!", @content)}} -->
         <!-- decorate @content with the image -->
         <div class='thumbnail'>
-            <img class='imgPreview' src="{{#item[#attr.id]}}" />
+            <img class='imgPreview' src="{{item[attr.id]}}" />
             <div class='caption'>{{@content}}</div>
         </div>
     {{else}}
-        <img src="{{#item[#attr.id]}}">
+        <img src="{{item[attr.id]}}">
     {{/}}
 
 
@@ -39,6 +36,6 @@
             </button>
         </div>
         <div class="col-md-8">
-            <img as="imgPreview" id="preview-{{@id}}" src="{{#item[#attr.id]}}" alt="Image preview">
+            <img as="imgPreview" id="preview-{{@id}}" src="{{item[attr.id]}}" alt="Image preview">
         </div>
     </div>

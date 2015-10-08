@@ -18,25 +18,22 @@ export class Entity extends Type
         require('derby-entity-select2')
         ...
 
+    init: (model) !->
+        super ...
 
-    # get all subitems in item.attr -- and dereference them if needed
-    subitems: (item, attr) ->
-        data = item[attr.id]
-        return [] if not data
+        attr = @getAttribute 'attr'
 
         if not attr.multi
-            data = [data]
+            console.error "probably wont work! item[attr.id] is not an array!"
 
         if not attr.reference
-            return data
+            # TODO: this needs testing!
+            model.ref "subitems", item.at(attr.id)
+        else
+            # refsModel contains array of references -> resolve them
+            items = model.root.at(attr.entity)
+            model.refList("subitems", items, "item." + attr.id)
 
-        # LiveScript automatically returns an array of these
-        for subitem in data
-            Api.instance!.item subitem, attr.entity
-
-    # get the indexed version of all attributes for this attribute's subitems
-    entityAttributes: (attr) ->
-        Api.instance!.entity(attr.entity).attributes
 
 
     # get the plain text of the attr(ibute) of the given item

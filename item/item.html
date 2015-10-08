@@ -3,9 +3,7 @@
 -->
 
 <index:>
-    {{with @item as #item}}
-        <view name="-{{@mode}}" inherit />
-    {{/}}
+    <view name="-{{@mode}}" inherit />
 
 
 <-text:>
@@ -16,16 +14,16 @@
 
 <-html:>
     {{if decorationAttrs.length}}
-        <view name="{{decorationAttrs[0].type}}" item="{{#item}}" attr="{{decorationAttrs[0]}}" da="{{displayAttr}}" mode="html">
-            <view name="{{da.type}}" item="{{item}}" attr="{{da}}" mode="html" />
+        <view name="{{decorationAttrs[0].type}}" item="{{item}}" attr="{{decorationAttrs[0]}}" da="{{displayAttr}}" inherit>
+            <view name="{{da.type}}" item="{{item}}" attr="{{da}}" inherit />
         </view>
     {{else}}
-        <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
+        <view name="{{displayAttr.type}}" item="{{item}}" attr="{{displayAttr}}" inherit />
     {{/}}
 
 
 
-<-htmlY:>
+<!-- <-htmlY:>
     <view name="-decorate" inherit>
         <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
     </view>
@@ -37,11 +35,11 @@
         </view>
     {{else}}
         {{@content}}
-    {{/}}
+    {{/}} -->
 
 
 
-<-htmlX:>
+<!-- <-htmlX:>
     <view name="-decorateRec" current="{{0}}" inherit>
         <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
     </view>
@@ -55,7 +53,7 @@
         </view>
     {{else}}
         {{@content}}
-    {{/}}
+    {{/}} -->
 
 
 <-edit:>
@@ -65,7 +63,7 @@
                 {{each $locale.supported as #loc}}
                     <fieldgroup id="{{#field.id}}_{{#loc}}" label="{{t($locale, entity.id + '.' + #field.id)}} ({{#loc}})">
                         <view id="{{#field.id}}_{{#loc}}" name="{{#field.type}}" mode="edit"
-                            item="{{#item}}" attr="{{#field}}" loc="{{#loc}}" inherit />
+                            item="{{item}}" attr="{{#field}}" loc="{{#loc}}" inherit />
                     </fieldgroup>
                 {{/}}
             {{else}}
@@ -73,7 +71,7 @@
                 <!-- {{console.log("render field: ", #field, _page.item[#field.id])}} -->
                 <fieldgroup id="{{#field.id}}" label="{{t($locale, entity.id + '.' + #field.id)}}">
                     <view id="{{#field.id}}" name="{{#field.type}}" mode="edit"
-                        item="{{#item}}" attr="{{#field}}" inherit />
+                        item="{{item}}" attr="{{#field}}" inherit />
                 </fieldgroup>
             {{/}}
         {{/each}}

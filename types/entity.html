@@ -3,29 +3,25 @@
 -->
 
 <index:>
-    {{with @item as #item}}  <!-- BUG in Derby parsing: complex @item cannot be passed through -->
-    {{with @attr as #attr}}  <!-- BUG in Derby parsing: cannot use @attr as object index -->
-        <view name="-{{@mode}}" inherit />
-    {{/}}{{/}}
-
+    <view name="-{{@mode}}" item="{{item}}" inherit />
 
 
 <-text:>
-    {{attribute(#item, #attr, l($locale))}}
+    {{attribute(item, attr, l($locale))}}
 
 <-html:>
-    {{each subitems(#item, #attr) as #subitem, #i}}
+    {{each subitems as #subitem, #i}}
         {{unless #i == 0}}
-            {{if #attr.id == 'name'}}
+            {{if attr.id == 'name'}}
                 &nbsp;
             {{else}}
                 <span>, &sp;</span>
             {{/}}
         {{/}}
-        <view name="item" item="{{#subitem}}" entity="{{#attr.entity}}" inherit />
+        <view name="item" item="{{#subitem}}" entity="{{attr.entity}}" inherit />
     <!-- {{else}}
         <br> -->
     {{/each}}
 
 <-edit:>
-    <d-select2 id="select2-{{@id}}" class="form-control" fixed value="{{#item[#attr.id]}}" inherit />
+    <d-select2 id="select2-{{@id}}" class="form-control" fixed value="{{item[attr.id]}}" inherit />

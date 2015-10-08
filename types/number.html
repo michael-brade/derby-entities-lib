@@ -3,16 +3,14 @@
 -->
 
 <index:>
-    {{with @item as #item}}{{with @attr as #attr}}
-        <view name="-{{@mode}}" inherit />
-    {{/}}{{/}}
+    <view name="-{{@mode}}" inherit />
 
 
 <-text:>
-    {{#item[#attr.id]}}
+    {{item[attr.id]}}
 
 <-html:>
-    {{#item[#attr.id]}}
+    {{item[attr.id]}}
 
 <-edit:>
-    <input id="{{@id}}" class="form-control" type="number" value="{{#item[#attr.id]}}">
+    <input id="{{@id}}" class="form-control" type="number" value="{{item[attr.id]}}">
