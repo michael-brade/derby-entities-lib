@@ -8,34 +8,29 @@ export class Item
     view: path.join __dirname, 'item.html'
 
     entity: null
-    displayAttr: null
 
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')
 
-    create: (model, dom) ->
-        # @entity = @getAttribute('entity')
-        #
-        # if typeof @entity == "string" # entityId given
-        #     @entity = Api.instance!.entity(entity)
-        #
-        # model.set "displayAttr", @entity.attributes[@entity.display.attribute]
-
-        # TODO: instead of @entity, could set decorations into model
-        # model.set "displayAttr", @entity.attributes[@entity.display.attribute]
-
-        # if not @types[attr.type]
-        #     throw Error "Entity type #{attr.type} is not supported!"
-
-
-    decorations: (index) ->
-        # do this in init by model.ref
         @entity = @getAttribute('entity')
-
         if typeof @entity == "string" # entityId given
             @entity = Api.instance!.entity(@entity)
 
-        @model.set "displayAttr", @entity.attributes[@entity.display.attribute]
 
-        if @entity.display.decorate.length > index
-            @entity.attributes[@entity.display.decorate[index]]
+        model.set "displayAttr", @entity.attributes[@entity.display.attribute]
+
+        # this is an array of the resolved attribute ids, i.e., display.decorate might say "photo", with is
+        # an attribute of type image, so this array holds the image attr object
+        model.set "decorationAttrs", []
+
+        for attrId in @entity.display.decorate
+            model.push "decorationAttrs", @entity.attributes[attrId]
+
+        # console.log "init ", @entity.id, @getAttribute('item').name, "decorationAttrs: ", model.get('decorationAttrs')
+
+
+    # TODO: either this:
+    # done: ->
+    #     @emit "done"
+
+    # or supply a page.done() method.

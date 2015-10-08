@@ -11,16 +11,45 @@
 <-text:>
     {{alert("TODO")}}
 
-<!-- this is a little bit inconsistent... maybe call this display and make html render the whole item? -->
+<!-- this is a little bit inconsistently named... maybe call this display and make html render the whole item? -->
+
+
 <-html:>
-    <view name="-decorate" current="{{0}}" inherit>
+    {{if decorationAttrs.length}}
+        <view name="{{decorationAttrs[0].type}}" item="{{#item}}" attr="{{decorationAttrs[0]}}" da="{{displayAttr}}" mode="html">
+            <view name="{{da.type}}" item="{{item}}" attr="{{da}}" mode="html" />
+        </view>
+    {{else}}
+        <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
+    {{/}}
+
+
+
+<-htmlY:>
+    <view name="-decorate" inherit>
         <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
     </view>
 
 <-decorate:>
-    {{if decorations(@current)}}
-        <view name="-decorate" current="{{@current + 1}}" inherit>
-            <view name="{{decorations(@current).type}}" item="{{#item}}" attr="{{decorations(@current)}}" inherit>
+    {{if decorationAttrs.length}}
+        <view name="{{decorationAttrs[0].type}}" item="{{#item}}" attr="{{decorationAttrs[0]}}" inherit>
+            {{@content}}
+        </view>
+    {{else}}
+        {{@content}}
+    {{/}}
+
+
+
+<-htmlX:>
+    <view name="-decorateRec" current="{{0}}" inherit>
+        <view name="{{displayAttr.type}}" item="{{#item}}" attr="{{displayAttr}}" inherit />
+    </view>
+
+<-decorateRec:>
+    {{if decorationAttrs.length > @current}}
+        <view name="-decorateRec" current="{{@current + 1}}" inherit>
+            <view name="{{decorationAttrs[@current].type}}" item="{{#item}}" attr="{{decorationAttrs[@current]}}" inherit>
                 {{@content}}
             </view>
         </view>
