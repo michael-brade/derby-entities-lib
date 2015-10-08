@@ -30,7 +30,7 @@
 
 
 <-edit:>
-    <form as="form" role="form" class="well form-horizontal" on-submit="done(this)">
+    <form as="page.itemForm" role="form" class="well form-horizontal" on-submit="done(this)">
         {{each entity.attributes as #field}}
             {{if #field.i18n}}
                 {{each $locale.supported as #loc}}
