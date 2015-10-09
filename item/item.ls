@@ -7,14 +7,15 @@ export class Item
 
     view: path.join __dirname, 'item.html'
 
-    entity: null
-
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')
 
+
         @entity = @getAttribute('entity')
-        if typeof @entity == "string" # entityId given
+        if typeof @entity == "string"       # entityId given, resolve to entity object
             @entity = Api.instance!.entity(@entity)
+        else                                # page entity object, change to indexed object
+            @entity = Api.instance!.entity(@entity.id)
 
 
         model.set "displayAttr", @entity.attributes[@entity.display.attribute]
