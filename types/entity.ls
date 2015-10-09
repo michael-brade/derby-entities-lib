@@ -22,17 +22,28 @@ export class Entity extends Type
         super ...
 
         attr = @getAttribute 'attr'
+        subitems = model.at('item').at(attr.id)
 
-        if not attr.multi
-            console.error "probably wont work! item[attr.id] is not an array!"
-
-        if not attr.reference
-            # TODO: this needs testing!
-            model.ref "subitems", item.at(attr.id)
+        if attr.multi
+            if attr.reference
+                # subitems contains array of references -> resolve them
+                items = model.root.at(attr.entity)
+                model.refList "subitems", items, subitems
+            else
+                # subitems contains array of items -> use that
+                model.ref "subitems", subitems
         else
-            # refsModel contains array of references -> resolve them
-            items = model.root.at(attr.entity)
-            model.refList("subitems", items, "item." + attr.id)
+            # subitems consists of either a single reference or a single item
+            # -> put it in an array with only one element
+            model.ref "_subitem.0", subitems
+
+            if attr.reference
+                #  resolve item reference
+                items = model.root.at(attr.entity)
+                model.refList "subitems", items, "_subitem"
+            else
+                # use item directly
+                model.ref "subitems", "_subitem"
 
 
 
