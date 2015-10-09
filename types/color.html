@@ -3,25 +3,25 @@
 -->
 
 <index:>
-        <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do!
-             So decide here which view to take according to @mode.
-             We have to use "@mode" instead of "mode" because "mode" will be undefined if it was inherited -->
-        <!-- <view name="{{@mode}}" item="{{@item}}" />  doesn't work! item will be undefined in subviews -->
+    <!-- You CANNOT call subviews directly, Derby won't recognize the correct controller if you do!
+         So decide here which view to take according to @mode.
+         We have to use "@mode" instead of "mode" because "mode" will be undefined if it was inherited -->
+    <!-- <view name="{{@mode}}" item="{{@item}}" />  doesn't work! item will be undefined in subviews -->
     <view name="-{{@mode}}" inherit />
 
 
 <-text:>
-    {{item[attr.id]}}
+    {{data}}
 
 <-html:>
-    <span class="color" style="background-color:{{item[attr.id]}}"></span>
+    <span class="color" style="background-color:{{data}}"></span>
     {{if @content}}
         <!-- decorate @content with the color -->
         <span>{{@content}}</span>
     {{else}}
-        <span>{{item[attr.id]}}</span>
+        <span>{{data}}</span>
     {{/}}
 
 
 <-edit:>
-    <input id="{{@id}}" class="form-control" type="color" value="{{item[attr.id]}}">
+    <input id="{{@id}}" class="form-control" type="color" value="{{data}}">

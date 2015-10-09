@@ -7,18 +7,18 @@
 
 
 <-text:>
-    {{item[attr.id]}}
+    {{data}}
 
 <-html:>
     {{if @content}}
         <!-- {{console.log("got something to decorate!", @content)}} -->
         <!-- decorate @content with the image -->
         <div class='thumbnail'>
-            <img class='imgPreview' src="{{item[attr.id]}}" />
+            <img class='imgPreview' src="{{data}}" />
             <div class='caption'>{{@content}}</div>
         </div>
     {{else}}
-        <img src="{{item[attr.id]}}">
+        <img src="{{data}}">
     {{/}}
 
 
@@ -36,6 +36,6 @@
             </button>
         </div>
         <div class="col-md-8">
-            <img as="imgPreview" id="preview-{{@id}}" src="{{item[attr.id]}}" alt="Image preview">
+            <img as="imgPreview" id="preview-{{@id}}" src="{{data}}" alt="Image preview">
         </div>
     </div>

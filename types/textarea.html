@@ -7,7 +7,7 @@
 
 
 <-text:>
-    {{text}}
+    {{data}}
 
 <-html:>
     {{if @content}}
@@ -16,19 +16,19 @@
                 <strong>{{@content}}</strong>
             </div>
             <div class="col-md-8">
-                <view name="-text" inherit />
+                {{data}}
             </div>
         </div>
     {{else}}
-        <view name="-text" inherit />
+        {{data}}
     {{/}}
 
 <-edit:>
     <!-- expanding text area trick -->
     <div as="expandingTextarea" class="expandingTextarea">
-        <pre><span>{{text}}</span><br></pre>
+        <pre><span>{{data}}</span><br></pre>
 
         <textarea id="{{@id}}" class="form-control">
-            {{text}}
+            {{data}}
         </textarea>
     </div>

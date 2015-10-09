@@ -3,11 +3,17 @@
 -->
 
 <index:>
-    <view name="-{{@mode}}" item="{{item}}" inherit />
+    <view name="-{{@mode}}" inherit />
 
 
 <-text:>
-    {{attribute(item, attr, l($locale))}}
+    {{each subitems as #subitem, #i}}
+        {{unless #i == 0 || attr.id == 'name'}}, {{/}}
+        <view name="item" item="{{#subitem}}" entity="{{attr.entity}}" inherit />
+    {{else}}
+        -
+    {{/each}}
+
 
 <-html:>
     {{each subitems as #subitem, #i}}
@@ -24,4 +30,4 @@
     {{/each}}
 
 <-edit:>
-    <d-select2 id="select2-{{@id}}" class="form-control" fixed value="{{item[attr.id]}}" inherit />
+    <d-select2 id="select2-{{@id}}" class="form-control" fixed value="{{data}}" inherit />

@@ -12,8 +12,7 @@ export class Image extends Type
 
         @reader  = new FileReader!
         @reader.onloadend = ~>
-            @imgPreview.src = @reader.result
-            @setAttribute(null, null, @reader.result)
+            @setData "data", @reader.result
 
 
         @imgInput.onchange = ~>
@@ -21,22 +20,16 @@ export class Image extends Type
             if imgFile
                 @reader.readAsDataURL(imgFile)
             else
-                @imgPreview.src = ""
-                @setAttribute!
+                @removeImage
 
 
     removeImage: ->
         @imgInput.value = ""
-        @setAttribute!
+        @setData undefined
 
-
-    setAttribute: (item, attr, value) ->
-        attr ?= @getAttribute('attr')
-
-        # Derby BUG: this doesn't work!
-        #@model.set("item[attr.id]", value)
-
-        @model.at("item").set(attr.id, value)
+    setData: (value) ->
+        @imgPreview.src = value
+        @model.set "data", value
 
 
     renderAttribute: (data, attr, locale, parent) ->

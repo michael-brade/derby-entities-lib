@@ -22,8 +22,30 @@ export class Type
 
 
     init: (model) !->
-        # needed because the passed $locale is apparently evaluated in component context (?!?)
         model.ref '$locale', model.root.at('$locale')
+
+        attr = @getAttribute 'attr'
+        item = model.at 'item'
+
+        if attr.i18n
+            loc = @getAttribute("loc")
+            if loc
+                # item[attr.id][loc]
+                model.ref "data", item.at(attr.id).at(loc)
+            else
+                # item[attr.id][$locale.locale]
+                model.start "data", "item", "attr.id", "$locale.locale", { copy: "input" },
+                    get: (item, attrId, loc) ->
+                        item?[attrId]?[loc]
+
+                    set: (value, item, attrId, loc) ->
+                        item[attrId] ?= {}
+                        item[attrId][loc] = value
+                        [item]
+        else
+            # item[attr.id]
+            model.ref "data", item.at(attr.id)
+
 
 
     function attribute(_attribute, item, attr, locale)

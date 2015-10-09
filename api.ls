@@ -144,7 +144,7 @@ class SingletonWrapper
             if not @types[attr.type]
                 throw Error "render: entity type #{attr.type} is not supported!"
 
-            locale = @model.get("$controller").l(@model.get("$locale"))
+            locale = @model.get("$locale.locale")
 
             renderedAttr = @types[attr.type].renderAttribute(item, attr, locale, parent)
 
@@ -185,7 +185,7 @@ class SingletonWrapper
             if not @types[attr.type]
                 throw Error "renderAsText: entity type #{attr.type} is not supported!"
 
-            locale = @model.get("$controller").l(@model.get("$locale"))
+            locale = @model.get("$locale.locale")
 
             renderedAttr = @types[attr.type].attribute(item, attr, locale)
 
