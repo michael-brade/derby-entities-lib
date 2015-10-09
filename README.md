@@ -22,6 +22,7 @@ MongoDB allows for arbitrary strutures, each item of one entity has to have the 
 all MongoDB documents have the same structure under a certain collection.
 
 
+
 ### Entities
 
 An entity definition has the following structure:
@@ -36,10 +37,7 @@ entities =
 
       attributes:
         * id:   "name"
-          type: "text"
-
         * id:   "email"  
-          type: "text"
 
         * id:   "photo"
           type: "image"
@@ -52,37 +50,105 @@ entities =
 
 ### Display
 
-(not implemented yet)
-
 This property defines how to display an item of that entity if displayed as an attribute
 of another item or in a select2 dropdown. It is the summary of that item, so to speak.
 
-* `attribute` sets the main attribute of that item (default: `name`)
-* `decorate` adds further information, like an image, a color, or just some additional text.
-  (default: empty)
+##### `attribute`, type: `string`, default: `name`
+
+This sets the main display attribute of that item.
+
+##### `decorate`, type: `array of strings`, default: none
+
+`decorate` adds further information, like an image, a color, or just some additional text.
+This works recursively, so the display attribute is rendered, that output is then input to
+the attribute renderer for the `photo` attribute (to stay with the example above), which
+then is passed to the `employer` renderer. (Actually, `entity` doesn't support decorations
+yet, but whatever, you get the idea.)
 
 
 ### Attributes
 
-All attributes must define at least two properties: `id` and `type`.
+Currently available attribute types:
+
+Type      | Description
+----------|--------------------------------------
+text      | default type; a simple string, edited using `<input type="text">`
+textarea  | also a simple string, but probably longer, thus edited with an automatically expanding textarea
+number    | an integer, edited using `<input type="number">`
+color     | a color, edited using `<input type="color">`
+image     | an image, which will be converted to base64 and stored like a string
+entity    | a nested structure, copy/reference the item of another entity type
+
+Planned for the future are:
+
+Type     | Description
+---------|--------------------------------------
+boolean  | enter a true/false value using a checkbox
+password | enter and encrypt a password securely
+object   | to allow for arbitrary data structures to be created and edited, essentially creating recursive forms
+markdown | a markdown text field, edited using CodeMirror and a visual editor
+svg      | instead of an image, use svg
+image-upload | maybe; this would upload the image to the server and create a link to it so that it doesn't have to be stored in the MongoDB
+file-upload | same, see above
 
 
-##### `id`, type: `string`
+All attributes must define at least one property: `id`. The following properties are available for all
+attribute types:
 
-The id of the attribute to be defined. Each entity has to have one attribute with the id `name`.
 
-##### `type`, type: `string`
+##### `id`, type: `string`, default: none, mandatory
 
-The type of the attribute, as available under `types/`.
+The id of the attribute to be defined. This will be the key used in the json structure for the value this attribute
+holds.
+
+##### `type`, type: `string`, default: `text`
+
+The type of the attribute, as available under `types/`. See the [next](#attribute-types) section for details.
+
+
+##### `i18n`, type: `boolean`, default: `false`
+
+If `i18n` is `false`, the value for the key is stored directly, like
+
+```
+{
+    <id>: value
+}
+```
+
+If `i18n` is `true`, then the value for the key will be an object with each supported locale as keys:
+
+```
+{
+    <id>: {
+        en: <value-in-en>
+        de: <value-in-de>
+        fr: <value-in-fr>
+        ...
+    }
+}
+```
+
 
 
 ### Attribute Types
 
 Each attribute type allows for certain properties to be set.
 
-#### Color, image, number, text, textarea
+#### Color, number, text, textarea
 
-These types don't take any properties.
+These types don't take any special properties. Except for number, they all support decorations.
+
+#### Image
+
+A base64 image storage in the model. Supports decorations.
+
+##### `max-size`, type: `number`, unit: `kB`, default: unlimited
+
+(not implemented yet)
+
+Since this is a base64 representation of the image, it should be possible to restrict the maximum size. The
+given number is interpreted as kilobytes.
 
 
 #### Entity
@@ -93,7 +159,12 @@ The entity type of which this attribute can select its item(s) from.
 
 ##### `reference`, type: `boolean`, default: `false`
 
-Should the whole item be copied into this item's attribute (`reference=false`), or should this attribute just be a reference to the other item.
+Should the whole item be copied into this item's attribute (`reference==false`), or should this attribute just be a
+reference to the other item (`reference==true`). Copying the item makes only sense if you want to keep the information just as it was
+when this item was edited; then it is irrelevant if the copied item is changed or deleted later on.
+
+If it is a reference on the other hand then all changes will be visible in this item and the referenced item may not
+be deleted as long as this item exists in the database.
 
 
 ##### `multi`, type: `boolean`, default: `false`
@@ -141,8 +212,8 @@ If the type extends the class `Type`, then `attribute` is optional, and instead 
 The component view takes a parameter `mode`, which can be either `text`, `html`, or `edit`, and that determines
 if the view should output plain text or html, or if the editor for that attribute should be rendered.
 
-Consequently, each component should define three subviews: `<:text:>`, `<:html:>`, and `<:edit:>`. There is a leading
-colon to make sure that views don't get confused with components, like `entity:text` vs `text`.
+Consequently, each component should define three subviews: `<-text:>`, `<-html:>`, and `<-edit:>`. There is a leading
+dash to make sure that views don't get confused with components, like `entity:text` vs `text`.
 
 A type finally has to be registered in `EntitiesApi` (api.ls).
 
