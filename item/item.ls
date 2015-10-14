@@ -27,11 +27,6 @@ export class Item
         for attrId in @entity.display.decorate
             model.push "decorationAttrs", @entity.attributes[attrId]
 
-        # console.log "init ", @entity.id, @getAttribute('item').name, "decorationAttrs: ", model.get('decorationAttrs')
 
-
-    # TODO: either this:
-    # done: ->
-    #     @emit "done"
-
-    # or supply a page.done() method.
+    done: (item) ->
+        @emit "done", item

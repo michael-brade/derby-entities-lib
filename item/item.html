@@ -28,7 +28,7 @@
 
 
 <-edit:>
-    <form as="page.itemForm" role="form" class="well form-horizontal" on-submit="done(this)">
+    <form as="form" role="form" class="well form-horizontal" on-submit="done(this)">
         {{each entity.attributes as #field}}
             {{if #field.i18n}}
                 {{each $locale.supported as #loc}}
@@ -38,8 +38,6 @@
                     </fieldgroup>
                 {{/}}
             {{else}}
-                <!-- this is called twice upon changing the input! WHY?? -->
-                <!-- {{console.log("render field: ", #field, _page.item[#field.id])}} -->
                 <fieldgroup id="{{#field.id}}" label="{{t($locale, entity.id + '.' + #field.id)}}">
                     <view id="{{#field.id}}" name="{{#field.type}}" mode="edit"
                         item="{{item}}" attr="{{#field}}" inherit />
