@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.1.2'
+version: '1.1.3'
 
 main: 'api.ls'
 
@@ -18,7 +18,7 @@ keywords:
 
 repository:
     type: 'git'
-    url: 'michael-brade/derby-entity'
+    url: 'michael-brade/derby-entities-lib'
 
 dependencies:
     # utils
