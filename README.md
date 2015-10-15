@@ -7,7 +7,7 @@ It is the base library for [derby-entity](https://github.com/michael-brade/derby
 ## Terminology
 
 * entity: in case of Derby: a MongoDB collection
-* item: the actual instances of an entity, a MongoDB document, has at least an id and a name attribute
+* item: the actual instances of an entity, a MongoDB document, has at least an id attribute
 * attribute: an attribute of an entity
 
 An analogy would be from the OO world: an entity is a class of which an item is an object.
