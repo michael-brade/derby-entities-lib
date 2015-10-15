@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.1.1'
+version: '1.1.2'
 
 main: 'api.ls'
 
