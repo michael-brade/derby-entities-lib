@@ -27,6 +27,8 @@ export class Item
         for attrId in @entity.display.decorate
             model.push "decorationAttrs", @entity.attributes[attrId]
 
+    focus: ->
+        $(@form).find(':input[type!=hidden]').first().focus()
 
     done: (item) ->
         @emit "done", item
