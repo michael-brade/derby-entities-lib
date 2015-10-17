@@ -18,32 +18,36 @@ export class Entity extends Type
         require('derby-entity-select2')
         ...
 
-    init: (model) !->
+
+    # after calling this, modelFrom will be a reference to the given item attribute
+    setupRef: (modelFrom, item, attr, loc) ->
         super ...
 
-        attr = @getAttribute 'attr'
-        subitems = model.at('item').at(attr.id)
+        # after super, modelFrom is already a reference to the subitems,
+        # which now also have to be dereferenced
+
+        subitems = modelFrom
 
         if attr.multi
             if attr.reference
                 # subitems contains array of references -> resolve them
-                items = model.root.at(attr.entity)
-                model.refList "subitems", items, subitems
+                items = @model.root.at(attr.entity)
+                @model.refList "subitems", items, subitems
             else
                 # subitems contains array of items -> use that
-                model.ref "subitems", subitems
+                @model.ref "subitems", subitems
         else
             # subitems consists of either a single reference or a single item
             # -> put it in an array with only one element
-            model.ref "_subitem.0", subitems
+            @model.ref "_subitem.0", subitems
 
             if attr.reference
                 #  resolve item reference
-                items = model.root.at(attr.entity)
-                model.refList "subitems", items, "_subitem"
+                items = @model.root.at(attr.entity)
+                @model.refList "subitems", items, "_subitem"
             else
                 # use item directly
-                model.ref "subitems", "_subitem"
+                @model.ref "subitems", "_subitem"
 
 
 
