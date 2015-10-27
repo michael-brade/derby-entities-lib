@@ -1,6 +1,7 @@
 require! {
     '../api': Api
     './type': { Type }
+    'derby-entity-select2/select2/data/model': ModelAdapter
 }
 
 _ = {
@@ -27,12 +28,21 @@ export class Entity extends Type
             theme: "bootstrap"
 
             multiple: attr.multi
-            #selectionAdapter: if attr.multi then 'multiple' else 'single'
 
             # TODO: sort according to displayAttr
             sorter: (a, b) ->
                 a.name.localeCompare b.name
 
+            dataAdapter: class EntityAdapter extends ModelAdapter
+                # params.data is the item that was selected
+                select: (params) ->
+                    if attr.reference
+                        params.data = params.data.id
+
+                    super params
+
+
+            #selectionAdapter: if attr.multi then 'multiple' else 'single'
 
             resultsTemplate: "entity:-edit-select2"
             selectionTemplate:  "entity:-edit-select2"
