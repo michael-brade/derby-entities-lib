@@ -30,4 +30,10 @@
     {{/each}}
 
 <-edit:>
-    <d-select2 id="select2-{{@id}}" class="form-control" fixed value="{{data}}" inherit />
+    <select2 id="select2-{{@id}}" classXX="form-control" options="{{select2conf}}"
+        data="{{items}}" value="{{data}}" inherit />
+
+<!-- View template used for displaying available items in the results dropdown and selected items.
+Pass data through to the view by setting it in the select2conf (options) under templateArgs. -->
+<-edit-select2:>
+    <view name="item" mode="html" entity="{{options.templateArgs.entity}}" item="{{@item}}" />

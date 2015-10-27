@@ -15,13 +15,36 @@ export class Entity extends Type
 
     # public
     components:
-        require('derby-entity-select2')
+        require('derby-entity-select2/select2/core')
         ...
-
 
     # after calling this, modelFrom will be a reference to the given item attribute
     setupRef: (modelFrom, item, attr, loc) ->
         super ...
+
+        @model.set "select2conf",
+            # select2 configuration, available in the templates under "options"
+            theme: "bootstrap"
+
+            multiple: attr.multi
+            #selectionAdapter: if attr.multi then 'multiple' else 'single'
+
+            # TODO: sort according to displayAttr
+            sorter: (a, b) ->
+                a.name.localeCompare b.name
+
+
+            resultsTemplate: "entity:-edit-select2"
+            selectionTemplate:  "entity:-edit-select2"
+
+            # used by -edit-select2 view/template
+            templateArgs:
+                entity: attr.entity
+
+
+
+        # all items of this entity
+        @model.ref("items", @model.root.at(attr.entity))
 
         # after super, modelFrom is already a reference to the subitems,
         # which now also have to be dereferenced
@@ -31,8 +54,7 @@ export class Entity extends Type
         if attr.multi
             if attr.reference
                 # subitems contains array of references -> resolve them
-                items = @model.root.at(attr.entity)
-                @model.refList "subitems", items, subitems
+                @model.refList "subitems", "items", subitems
             else
                 # subitems contains array of items -> use that
                 @model.ref "subitems", subitems
@@ -43,8 +65,7 @@ export class Entity extends Type
 
             if attr.reference
                 #  resolve item reference
-                items = @model.root.at(attr.entity)
-                @model.refList "subitems", items, "_subitem"
+                @model.refList "subitems", "items", "_subitem"
             else
                 # use item directly
                 @model.ref "subitems", "_subitem"
