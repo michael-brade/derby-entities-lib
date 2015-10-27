@@ -24,19 +24,19 @@ export class Type
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')
 
-        attr = @getAttribute 'attr'
-        item = model.at 'item'
-        loc = @getAttribute("loc")
+        @attr = @getAttribute 'attr'
+        @item = model.at 'item'
+        @loc = @getAttribute 'loc'
 
-        @setupRef model.at("data"), item, attr, loc
+        @setupRef model.at 'data'
 
 
     # after calling this, modelFrom will be a reference to the given item attribute
-    setupRef: (modelFrom, item, attr, loc) ->
-        if attr.i18n
-            if loc
+    setupRef: (modelFrom) ->
+        if @attr.i18n
+            if @loc
                 # item[attr.id][loc]
-                modelFrom.ref item.at(attr.id).at(loc)
+                modelFrom.ref @item.at(@attr.id).at(@loc)
             else
                 # item[attr.id][$locale.locale]
                 modelFrom.start "item", "attr.id", "$locale.locale", { copy: "input" },
@@ -49,7 +49,7 @@ export class Type
                         [item]
         else
             # item[attr.id]
-            modelFrom.ref item.at(attr.id)
+            modelFrom.ref @item.at(@attr.id)
 
 
 

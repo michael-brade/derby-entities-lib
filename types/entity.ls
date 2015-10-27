@@ -19,19 +19,21 @@ export class Entity extends Type
         require('derby-entity-select2/select2/core')
         ...
 
-    # after calling this, modelFrom will be a reference to the given item attribute
-    setupRef: (modelFrom, item, attr, loc) ->
+    init: (model) ->
         super ...
 
+        attr = @attr
+        entity = Api.instance!.entity @attr.entity
+
+        # select2 configuration, available in the templates under "options"
         @model.set "select2conf",
-            # select2 configuration, available in the templates under "options"
             theme: "bootstrap"
 
-            multiple: attr.multi
+            multiple: @attr.multi
 
-            # TODO: sort according to displayAttr
             sorter: (a, b) ->
-                a.name.localeCompare b.name
+                displayAttrId = entity.display.attribute
+                a[displayAttrId].localeCompare(b[displayAttrId])
 
             dataAdapter: class EntityAdapter extends ModelAdapter
                 # params.data is the item that was selected
@@ -53,16 +55,20 @@ export class Entity extends Type
 
 
 
+    # after calling this, modelFrom will be a reference to the given item attribute
+    setupRef: (modelFrom) ->
+        super ...
+
         # all items of this entity
-        @model.ref("items", @model.root.at(attr.entity))
+        @model.ref("items", @model.root.at(@attr.entity))
 
         # after super, modelFrom is already a reference to the subitems,
         # which now also have to be dereferenced
 
         subitems = modelFrom
 
-        if attr.multi
-            if attr.reference
+        if @attr.multi
+            if @attr.reference
                 # subitems contains array of references -> resolve them
                 @model.refList "subitems", "items", subitems
             else
@@ -73,7 +79,7 @@ export class Entity extends Type
             # -> put it in an array with only one element
             @model.ref "_subitem.0", subitems
 
-            if attr.reference
+            if @attr.reference
                 #  resolve item reference
                 @model.refList "subitems", "items", "_subitem"
             else
