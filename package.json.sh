@@ -25,10 +25,17 @@ dependencies:
     'lodash': '3.x'
 
 devDependencies:
-    'livescript': '1.x'
+    'livescript': "1.4"
+    'gulp': "3.x"
+    'gulp-plumber': "1.x"
+    'gulp-livescript': "3.x"
+    'gulp-rename': "1.x"
+    'gulp-notify': "2.x"
+    'gulp-gitignore': "*"
+    'gulp-sequence': "*"
+    #'gulp-git': "*"
+    #'gulp-if': "*"
 
-    # possibly, depending on how you set it up
-    'browserify-livescript': '0.2.x'
 
 
 scripts:
