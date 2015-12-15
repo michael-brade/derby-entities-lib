@@ -42,9 +42,11 @@ scripts:
     # beware: --all would be really correct, but it also removes node_modules, so use --include-untracked instead
     prebuild: 'touch .create_stash && git stash save --include-untracked "npm build stash"'
     # build the distribution
-    build: "rm -r dist; mkdir dist; gulp build; cp package.json dist"
+    build: "gulp build && ./package.json.sh && cp package.json dist"
     # restore the original situation
     postbuild: 'git stash pop --index && rm .create_stash'
+
+    clean: "rm -rf dist"
 
     ## testing
 
