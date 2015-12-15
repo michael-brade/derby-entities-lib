@@ -29,16 +29,25 @@ devDependencies:
     'gulp': "3.x"
     'gulp-plumber': "1.x"
     'gulp-livescript': "3.x"
-    'gulp-rename': "1.x"
+    'gulp-uglify': "1.x"
     'gulp-notify': "2.x"
     'gulp-gitignore': "*"
-    'gulp-sequence': "*"
-    #'gulp-git': "*"
-    #'gulp-if': "*"
 
 
 
 scripts:
+    ## building
+
+    # make sure a stash will be created and stash everything not committed
+    # beware: --all would be really correct, but it also removes node_modules, so use --include-untracked instead
+    prebuild: 'touch .create_stash && git stash save --include-untracked "npm build stash"'
+    # build the distribution
+    build: "rm -r dist; mkdir dist; gulp build; cp package.json dist"
+    # restore the original situation
+    postbuild: 'git stash pop --index && rm .create_stash'
+
+    ## testing
+
     test: "echo \"TODO: no tests specified yet\" && exit 1"
 
 engines:
