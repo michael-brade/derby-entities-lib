@@ -133,10 +133,10 @@ class SingletonWrapper
                 console.error "null item in API.render! entityId_or_attr: #{entityId_or_attr}"
                 return ""
 
-            if typeof entityId_or_attr === "string" # entityId given
+            if typeof entityId_or_attr == "string" # entityId given
                 entity = @entity entityId_or_attr
                 attr = entity.attributes[entity.display.attribute]
-            else if typeof entityId_or_attr === "object" # attr given
+            else if typeof entityId_or_attr == "object" # attr given
                 attr = entityId_or_attr
             else
                 throw Error "render: wrong type of second argument: #{entityId_or_attr}"
@@ -174,10 +174,10 @@ class SingletonWrapper
                 console.error "null item in API.renderAsText! entityId_or_attr: #{entityId_or_attr}"
                 return ""
 
-            if typeof entityId_or_attr === "string" # entityId given
+            if typeof entityId_or_attr == "string" # entityId given
                 entity = @entity entityId_or_attr
                 attr = entity.attributes[entity.display.attribute]
-            else if typeof entityId_or_attr === "object" # attr given
+            else if typeof entityId_or_attr == "object" # attr given
                 attr = entityId_or_attr
             else
                 throw Error "renderAsText: wrong type of second argument: #{entityId_or_attr}"
