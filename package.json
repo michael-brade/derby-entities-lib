@@ -1,0 +1,44 @@
+{
+  "name": "derby-entities-lib",
+  "description": "Base library for derby-entity CRUD component and derby-entities-visualizations",
+  "version": "1.1.3",
+  "main": "api.ls",
+  "author": {
+    "name": "Michael Brade",
+    "email": "brade@kde.org"
+  },
+  "keywords": [
+    "derby",
+    "entity",
+    "crud"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "michael-brade/derby-entities-lib"
+  },
+  "dependencies": {
+    "lodash": "3.x",
+    "showdown": "1.x"
+  },
+  "devDependencies": {
+    "livescript": "1.4.x",
+    "uglify-js": "2.6.x"
+  },
+  "scripts": {
+    "prebuild": "npm run clean; touch .create_stash && git stash save --include-untracked \"npm build stash\";",
+    "build": "export DEST=dist;export ASSETS='.*.css|.*.html|./README.md|./package.json';find -path './node_modules*' -prune -o -name '*.ls' -print0| xargs -n1 -0 sh -c 'echo Compiling and minifying $0...;DEST_PATH=\"$DEST/`dirname $0`\";mkdir -p \"$DEST_PATH\";lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST_PATH/`basename -s .ls \"$0\"`\".js;';echo \"\u001b[01;32mCopying assets...\u001b[00m\";find \\( -path './node_modules*' -o -path \"./$DEST/*\" \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0| xargs -n1 -0 sh -c 'mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\"';echo \"\u001b[01;32mDone!\u001b[00m\";",
+    "postbuild": "git stash pop --index && rm .create_stash;",
+    "clean": "rm -rf dist;",
+    "test": "echo \"TODO: no tests specified yet\" && exit 1;",
+    "prepublish": "npm run clean; npm run build;",
+    "publish": "npm publish dist;"
+  },
+  "engines": {
+    "node": "4.x || 5.x"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michael-brade/derby-entities-lib/issues"
+  },
+  "homepage": "https://github.com/michael-brade/derby-entities-lib#readme"
+}
