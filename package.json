@@ -17,19 +17,26 @@
     "url": "michael-brade/derby-entities-lib"
   },
   "dependencies": {
-    "lodash": "3.x",
-    "showdown": "1.x"
+    "lodash": "3.x"
   },
   "devDependencies": {
     "livescript": "1.4.x",
-    "uglify-js": "2.6.x"
+    "uglify-js": "2.6.x",
+    "browserify": "12.x",
+    "browserify-livescript": "0.2.x",
+    "derby": "michael-brade/derby",
+    "nightmare": "2.x",
+    "mocha": "2.3.x",
+    "chai": "3.x",
+    "chai-as-promised": "5.x"
   },
   "scripts": {
     "prebuild": "npm run clean; touch .create_stash && git stash save --include-untracked \"npm build stash\";",
     "build": "export DEST=dist;export ASSETS='.*.css|.*.html|./README.md|./package.json';find -path './node_modules*' -prune -o -name '*.ls' -print0| xargs -n1 -0 sh -c 'echo Compiling and minifying $0...;DEST_PATH=\"$DEST/`dirname $0`\";mkdir -p \"$DEST_PATH\";lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST_PATH/`basename -s .ls \"$0\"`\".js;';echo \"\u001b[01;32mCopying assets...\u001b[00m\";find \\( -path './node_modules*' -o -path \"./$DEST/*\" \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0| xargs -n1 -0 sh -c 'mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\"';echo \"\u001b[01;32mDone!\u001b[00m\";",
     "postbuild": "git stash pop --index && rm .create_stash;",
     "clean": "rm -rf dist;",
-    "test": "echo \"TODO: no tests specified yet\" && exit 1;",
+    "test": "mocha test/_*.ls test/nightmare.js;",
+    "disttest": "npm run build; TODO",
     "prepublish": "npm run clean; npm run build;",
     "publish": "npm publish dist;"
   },

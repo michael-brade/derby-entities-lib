@@ -24,8 +24,22 @@ dependencies:
     'lodash': '3.x'
 
 devDependencies:
-    'livescript': "1.4.x"
+    # building
+    'livescript': '1.4.x'
     'uglify-js': '2.6.x'
+
+    # testing
+    'browserify': '12.x'
+    "browserify-livescript": "0.2.x"
+
+    'derby': 'michael-brade/derby'
+
+    'nightmare': '2.x'
+    'mocha': '2.3.x'
+    'chai': '3.x'
+    'chai-as-promised': '5.x'
+
+
 
 scripts:
     ## building
@@ -63,7 +77,9 @@ scripts:
 
     ## testing
 
-    test: "echo \"TODO: no tests specified yet\" && exit 1;"
+    test: 'mocha test/_*.ls test/nightmare.js;'
+
+    disttest: 'npm run build; TODO'  # find out how to run the tests using dist/*
 
     ## publishing - run as "npm run publish"
 

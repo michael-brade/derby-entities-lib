@@ -4,6 +4,32 @@ This library reads the entity schema definition and provides the API to access e
 It is the base library for [derby-entity](https://github.com/michael-brade/derby-entity).
 
 
+## Installation
+
+As usual, the library is installed via
+
+```
+npm install derby-entities-lib
+```
+
+However, I don't like to contribute to huge `node_modules` directories, so the npm package is compiled and minified, and
+neither carries the original sources, nor the tests. If you want a readable and debuggable version, install it directly
+from GitHub using
+
+```
+npm install michael-brade/derby-entities-lib
+```
+
+or clone the repository.
+
+```
+npm install
+npm test
+```
+
+will then run the tests.
+
+
 ## Terminology
 
 * entity: in case of Derby: a MongoDB collection
@@ -216,6 +242,41 @@ Consequently, each component should define three subviews: `<-text:>`, `<-html:>
 dash to make sure that views don't get confused with components, like `entity:text` vs `text`.
 
 A type finally has to be registered in `EntitiesApi` (api.ls).
+
+
+
+#### Testing
+
+Testing is done with `mocha`. There are two types of tests that are used in this project:
+
+* API tests running directly in Node; the standard, they are executed by the `mocha` command
+
+* Derby tests requiring the DOM; they are run in a browser (electron).
+  Written as `mocha` tests, run in electron, which is started by `nightmare`. There is not really a server needed,
+  `browserify` bundles `DerbyStandalone` in `before()` and the `test.html` file includes Derby as well as the
+  components to test, which is then read locally using `file://` by electron (through `nightmare`).
+
+
+**Note to self: this is a list all possible scenarios**
+
+* mocha tests written in standard js files
+
+    - execute in NodeJS: `mocha`
+    - execute in electron:
+        * without DOM: `electron-mocha`
+        * with DOM: `electron-mocha --renderer`, `iron-node _mocha`
+
+
+* DOM mocha tests loaded into a html file (using mocha.js)
+    - execute in phantomjs (with DOM): `mocha-phantomjs index.html`
+    - execute in electron: no need to, use the above `electron-mocha` instead
+    - execute manually by using any browser and opening the `.html` file
+
+
+* DOM tests on a webpage without mocha interface:
+    - in electron: `nightmare` (could still be executed using `mocha`)
+    - in phantomjs or slimerjs: `casperjs`
+    - in any browser: `webdriverio` (requires selenium server)
 
 
 ## License
