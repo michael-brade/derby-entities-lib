@@ -1,3 +1,5 @@
+'use strict'
+
 require! {
     'lodash': _
 }
@@ -25,7 +27,7 @@ class SingletonWrapper
     # because this way exports the function first, then creates the EntitiesApi class,
     # requiring the circle:  this -> ./types/entity -> this
     export @instance = ->
-        _instance || console.error "No instance: EntitiesApi has not been initialized yet!"
+        _instance || throw new Error "No instance: EntitiesApi has not been initialized yet!"
 
 
     # A class to accesss entities and items.
