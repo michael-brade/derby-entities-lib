@@ -110,7 +110,7 @@ class SingletonWrapper
         # Find the item of the given entity (or any entity if not) with the given ID. Needed to resolve references.
         item: (itemId, entityId) ->
             if not entityId
-                throw Error 'not implemented yet, entityId needs to be provided!'
+                throw new Error 'not implemented yet, entityId needs to be provided!'
 
             item = @model.at(entityId).get(itemId)
             if not item
@@ -141,10 +141,10 @@ class SingletonWrapper
             else if typeof entityId_or_attr == "object" # attr given
                 attr = entityId_or_attr
             else
-                throw Error "render: wrong type of second argument: #{entityId_or_attr}"
+                throw new Error "render: wrong type of second argument: #{entityId_or_attr}"
 
             if not @types[attr.type]
-                throw Error "render: entity type #{attr.type} is not supported!"
+                throw new Error "render: entity type #{attr.type} is not supported!"
 
             locale = @model.get("$locale.locale")
 
@@ -182,10 +182,10 @@ class SingletonWrapper
             else if typeof entityId_or_attr == "object" # attr given
                 attr = entityId_or_attr
             else
-                throw Error "renderAsText: wrong type of second argument: #{entityId_or_attr}"
+                throw new Error "renderAsText: wrong type of second argument: #{entityId_or_attr}"
 
             if not @types[attr.type]
-                throw Error "renderAsText: entity type #{attr.type} is not supported!"
+                throw new Error "renderAsText: entity type #{attr.type} is not supported!"
 
             locale = @model.get("$locale.locale")
 
