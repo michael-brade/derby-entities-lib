@@ -77,6 +77,18 @@ class SingletonWrapper
         # do not serialize the API
         toJSON: -> undefined
 
+        # plugin method to add a new or overwrite an existing type
+        # The type object needs to be either a LiveScript class object or
+        # define a name attribute.
+        #
+        # TODO: need to add this as a component to derby as well -- pass Derby app to CTOR?
+        addType: (type) !->
+            if type.@@.displayName
+                @types[type.@@.displayName.toLowerCase!] = type
+            else
+                @types[type.name.toLowerCase!] = type
+
+
 
         # create array of queries for this entity as well as all dependent entites
         queryDependentEntities: (model, entity) ->
