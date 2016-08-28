@@ -21,7 +21,7 @@ repository:
 
 dependencies:
     # utils
-    'lodash': '3.x'
+    'lodash': '4.x'
 
 devDependencies:
     # building

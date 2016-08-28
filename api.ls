@@ -64,8 +64,8 @@ class SingletonWrapper
             # init API and index entities
             @model = model.root
             @entities = entities
-            @entitiesIdx = _.indexBy _.clone(entities, true), (entity) ->
-                entity.attributes = _.indexBy(entity.attributes, 'id')  # because of this we need deep _.clone()
+            @entitiesIdx = _.keyBy _.cloneDeep(entities), (entity) ->
+                entity.attributes = _.keyBy(entity.attributes, 'id')  # because of this we need deep _.clone()
                 return entity.id
 
             # put self into the model for access

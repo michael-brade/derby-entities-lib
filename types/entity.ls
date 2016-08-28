@@ -5,9 +5,9 @@ require! {
 }
 
 _ = {
-    uniq: require('lodash/array/uniq')
-    forEach: require('lodash/collection/forEach')
-    includes: require('lodash/collection/includes')
+    uniq: require('lodash/uniq')
+    forEach: require('lodash/forEach')
+    includes: require('lodash/includes')
 }
 
 export class Entity extends Type
