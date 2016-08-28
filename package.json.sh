@@ -12,6 +12,7 @@ author:
 
 keywords:
     'derby'
+    'component'
     'entity'
     'crud'
 
@@ -25,17 +26,20 @@ dependencies:
 
 devDependencies:
     # building
-    'livescript': '1.4.x'
-    'uglify-js': '2.6.x'
+    'livescript': '1.5.x'
+    'uglify-js': '2.7.x'
 
     # testing
-    'browserify': '12.x'
+    'browserify': '13.x'
     "browserify-livescript": "0.2.x"
 
     'derby': 'michael-brade/derby'
 
+    'mocha': '3.x'
+    'mocha-generators': '1.x'
+
     'nightmare': '2.x'
-    'mocha': '2.3.x'
+
     'chai': '3.x'
     'chai-as-promised': '5.x'
 
