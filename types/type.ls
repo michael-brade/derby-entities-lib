@@ -1,10 +1,10 @@
 require! path
 
-# This base class provides code needed and shared by all types.
+# This component base class provides code needed and shared by all type components.
 # It especially conceals boilerplate code for attribute and renderAttribute.
 #
-# I guess all this effort is only needed because of jQuery DataTables... There
-# is no need for renderAttribute otherwise, is there?
+# TODO: I guess all this effort is only needed because of jQuery DataTables...
+# There is no need for renderAttribute otherwise, is there?
 export class Type
 
     # CTOR
@@ -21,25 +21,28 @@ export class Type
         @renderAttribute = renderAttribute.bind @, _renderAttribute.bind @
 
 
+    # init() sets up "$locale" and "data" model paths. "data" points directly to the
+    # proper value given by item, attr.id, loc or $locale. Thus, the views can simply
+    # use "data" to get and set the value.
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')
 
         @attr = @getAttribute 'attr'
-        @item = model.at 'item'
+        @item = model.at 'item' # @getAttribute 'item'
         @loc = @getAttribute 'loc'
 
-        @setupRef model.at 'data'
+        @setupRef 'data'
 
 
-    # after calling this, modelFrom will be a reference to the given item attribute
-    setupRef: (modelFrom) ->
+    # after calling this, pathFrom will be a reference to the given item attribute
+    setupRef: (pathFrom) ->
         if @attr.i18n
             if @loc
-                # item[attr.id][loc]
-                modelFrom.ref @item.at(@attr.id).at(@loc)
+                # pathFrom -> item[attr.id][loc]
+                @model.ref pathFrom, @item.at(@attr.id).at(@loc)
             else
-                # item[attr.id][$locale.locale]
-                modelFrom.start "item", "attr.id", "$locale.locale", { copy: "input" },
+                # pathFrom -> item[attr.id][$locale.locale]
+                @model.start pathFrom, 'item', 'attr.id', '$locale.locale', { copy: 'input' },
                     get: (item, attrId, loc) ->
                         item?[attrId]?[loc]
 
@@ -48,8 +51,8 @@ export class Type
                         item[attrId][loc] = value
                         [item]
         else
-            # item[attr.id]
-            modelFrom.ref @item.at(@attr.id)
+            # pathFrom -> item[attr.id]
+            @model.ref pathFrom, @item.at(@attr.id)
 
 
 

@@ -55,17 +55,18 @@ export class Entity extends Type
 
 
 
-    # after calling this, modelFrom will be a reference to the given item attribute
-    setupRef: (modelFrom) ->
+    # after calling this, pathFrom will be a reference to the given item attribute
+    # pathFrom is a model path
+    setupRef: (pathFrom) ->
         super ...
 
         # all items of this entity
         @model.ref("items", @model.root.at(@attr.entity))
 
-        # after super, modelFrom is already a reference to the subitems,
+        # after super, pathFrom is already a reference to the subitems,
         # which now also have to be dereferenced
 
-        subitems = modelFrom
+        subitems = pathFrom
 
         if @attr.multi
             if @attr.reference
