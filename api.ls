@@ -1,13 +1,16 @@
 'use strict'
 
 require! {
+    path
     'lodash': _
+    './types': { supportedTypeComponents }
 }
 
 
 class SingletonWrapper
 
     # private static
+
     _instance = null
 
 
@@ -16,7 +19,7 @@ class SingletonWrapper
     ## Init the EntitiesApi singleton.
     #
     # Only needs to be called once.
-    export @init = (model, entities) ->
+    export init = (model, entities) ->
         _instance ?:= new EntitiesApi(model, entities)
 
 
@@ -26,7 +29,7 @@ class SingletonWrapper
     # export individually to avoid issues with circular dependencies and browserify exports
     # because this way exports the function first, then creates the EntitiesApi class,
     # requiring the circle:  this -> ./types/entity -> this
-    export @instance = ->
+    export instance = ->
         _instance || throw new Error "No instance: EntitiesApi has not been initialized yet!"
 
 
@@ -39,16 +42,6 @@ class SingletonWrapper
         model: null
         entities: null
         entitiesIdx: null
-
-        types: {
-            text: new (require './types/text').Text()
-            textarea: new (require './types/textarea').Textarea()
-            number: new (require './types/number').Number()
-            entity: new (require './types/entity').Entity()
-            color: new (require './types/color').Color()
-            image: new (require './types/image').Image()
-        }
-
 
         # CTOR
         (model, entities) ->
@@ -73,6 +66,11 @@ class SingletonWrapper
             # put self into the model for access
             model.root.set '$entities._0', this
 
+            # instantiate type classes
+            @types = {}
+            supportedTypeComponents.forEach (type) ~>
+                @types[type.displayName.toLowerCase!] = new type
+
 
         # do not serialize the API
         toJSON: -> undefined
@@ -83,7 +81,9 @@ class SingletonWrapper
         #
         # TODO: need to add this as a component to derby as well -- pass Derby app to CTOR?
         addType: (type) !->
-            if type.@@.displayName
+            if type.displayName
+                @types[type.displayName.toLowerCase!] = new type
+            else if type.@@.displayName
                 @types[type.@@.displayName.toLowerCase!] = type
             else
                 @types[type.name.toLowerCase!] = type
@@ -122,7 +122,7 @@ class SingletonWrapper
         # Find the item of the given entity (or any entity if not) with the given ID. Needed to resolve references.
         item: (itemId, entityId) ->
             if not entityId
-                throw new Error 'not implemented yet, entityId needs to be provided!'
+                throw new Error 'API::item(itemId): not implemented yet, entityId needs to be provided!'
 
             item = @model.at(entityId).get(itemId)
             if not item
@@ -159,7 +159,6 @@ class SingletonWrapper
                 throw new Error "render: entity type #{attr.type} is not supported!"
 
             locale = @model.get("$locale.locale")
-
             renderedAttr = @types[attr.type].renderAttribute(item, attr, locale, parent)
 
             # TODO: is this the right place for this code?
