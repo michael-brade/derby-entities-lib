@@ -2,45 +2,11 @@
 
 require! {
     '../api': EntitiesApi
-    'racer/lib/Model'
+
+    './data/schema': { schema }
+    './data/model': { model }
 }
 
-
-
-# create the schema
-
-testEntities =
-    * id: 'people'
-      attributes:
-        * id:   'name'
-        * id:   'description'
-          type: 'textarea'
-          i18n: true
-
-    * id: 'company'
-      attributes:
-        * id:   'name'
-        * id:   'employees'
-          type: 'entity'
-          entity: 'people'
-          multi: true
-          uniq: false       # same element several times -- default is true
-          reference: true   # just store a reference vs. copying the whole object
-
-
-    # TODO test referencing entity with display attribute (name) being i18n, or an entity itsel
-    # * id: 'xx'
-
-# create the data
-
-model = new Model
-
-model.set '_page.people', [
-    * name: 'Max'
-      description: 'nice guy'
-    * name: 'Andy'
-      description: 'hacker'
-]
 
 
 describe 'derby-entities-lib API tests', !->
@@ -51,10 +17,10 @@ describe 'derby-entities-lib API tests', !->
         expect EntitiesApi.instance .to.throw(Error)
 
         # initialize
-        EntitiesApi.init(model, testEntities)
+        EntitiesApi.init model, schema
 
         expect EntitiesApi.instance!.model .to.equal model
-        expect EntitiesApi.instance!.entities .to.equal testEntities
+        expect EntitiesApi.instance!.entities .to.equal schema
 
         # find API in model
         expect EntitiesApi.instance! .to.equal model.get('$entities._0')
@@ -67,11 +33,11 @@ describe 'derby-entities-lib API tests', !->
                 * id:   'whatever'
             ...
 
-        EntitiesApi.init(model, newEntities)
+        EntitiesApi.init model, newEntities
 
         # still the old entities
         expect EntitiesApi.instance!.model .to.equal model
-        expect EntitiesApi.instance!.entities .to.equal testEntities
+        expect EntitiesApi.instance!.entities .to.equal schema
 
 
     test 'API was globally initialized', ->

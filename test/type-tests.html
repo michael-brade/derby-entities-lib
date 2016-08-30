@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf8">
+
+    <title>Test page</title>
+</head>
+
+<body>
+    <!-- Derby Standalone -->
+    <script src="./derby/derby-standalone.js"></script>
+
+
+    <!-- App -->
+    <script>
+        var app = derby.createApp();
+        app.registerViews();
+
+        TypesTest = require('test/types')
+        app.component('types-test', TypesTest);
+
+        var page = app.createPage();
+        page.model.set('_page.item', { textattr: 'this is the content' });
+
+        document.body.appendChild(page.getFragment('types'));
+    </script>
+
+</body>
+
+</html>
