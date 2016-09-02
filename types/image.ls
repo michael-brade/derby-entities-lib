@@ -10,7 +10,7 @@ export class Image extends Type
     create: (model, dom) ->
         return if @getAttribute('mode') != 'edit'
 
-        @reader  = new FileReader!
+        @reader  = new FileReader
         @reader.onloadend = ~>
             @setData "data", @reader.result
 
@@ -32,5 +32,5 @@ export class Image extends Type
         @model.set "data", value
 
 
-    renderAttribute: (data, attr, locale, parent) ->
+    renderAttributeData: (data, attr, locale, parent) ->
         "<img src='#{data}' />"

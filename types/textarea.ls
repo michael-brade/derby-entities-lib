@@ -15,5 +15,5 @@ export class Textarea extends Type
         @emit "keydown", ev, el
 
 
-    renderAttribute: (data, attr, locale, parent) ->
+    renderAttributeData: (data, attr, locale, parent) ->
         data

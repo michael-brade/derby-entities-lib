@@ -4,5 +4,5 @@ require! {
 
 export class Number extends Type
 
-    renderAttribute: (data, attr, locale, parent) ->
+    renderAttributeData: (data, attr, locale, parent) ->
         data

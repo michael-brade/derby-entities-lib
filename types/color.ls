@@ -7,7 +7,7 @@ export class Color extends Type
     style: __dirname + "/color"
 
 
-    renderAttribute: (data, attr, locale, parent) ->
+    renderAttributeData: (data, attr, locale, parent) ->
         if parent
             $(parent).css("background-color", data)
             return data

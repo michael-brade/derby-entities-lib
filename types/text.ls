@@ -5,5 +5,5 @@ require! {
 export class Text extends Type
 
 
-    renderAttribute: (data, attr, locale) ->
+    renderAttributeData: (data, attr, locale) ->
         data

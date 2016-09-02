@@ -90,7 +90,7 @@ export class Entity extends Type
 
 
     # get the plain text of the attr(ibute) of the given item
-    attribute: (data, attr, locale) ->
+    attributeData: (data, attr, locale) ->
         return '\n' if not data
 
         # if the name of an entity is made up of other entities, don't put a comma in there
@@ -111,7 +111,7 @@ export class Entity extends Type
 
 
     # render the attribute attr of item
-    renderAttribute: (data, attr, locale, parent) ->
+    renderAttributeData: (data, attr, locale, parent) ->
         return '\n' if not data
 
         # if the name of an entity is made up of other entities, don't put a comma in there

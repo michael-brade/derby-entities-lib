@@ -8,24 +8,21 @@ require! path
 export class Type
 
     # CTOR
-    ->
-        if (@@@ == Type)
-             throw new Error("Can't instantiate abstract Type class!");
+    -> if @@@ == Type then throw new Error("Cannot instantiate abstract Type class!")
 
-        @@@::view = path.join __dirname, @@@.displayName.toLowerCase! + '.html'
+    renderAttributeData: -> throw new Error("renderAttributeData() unimplemented! Implement it in #{@@@displayName}!")
 
-        _attribute = @attribute
-        @attribute = attribute.bind @, _attribute?.bind @
 
-        _renderAttribute = @renderAttribute
-        @renderAttribute = renderAttribute.bind @, _renderAttribute.bind @
+    # this is called by LiveScript inheritance before the subclass's prototype methods are assigned
+    @extended = (subclass) !->
+        subclass::view = path.join __dirname, subclass.displayName.toLowerCase! + '.html'
 
 
     # init() sets up "$locale" and "data" model paths. "data" points directly to the
     # proper value given by item, attr.id, loc or $locale. Thus, the views can simply
     # use "data" to get and set the value.
     init: (model) !->
-        model.ref '$locale', model.root.at('$locale')
+        model.ref '$locale', model.root.at '$locale'
 
         @attr = @getAttribute 'attr'
         @item = model.at 'item' # @getAttribute 'item'
@@ -56,19 +53,19 @@ export class Type
 
 
 
-    function attribute(_attribute, item, attr, locale)
+    attribute: (item, attr, locale) ->
         data = @attributeI18n item[attr.id] ? "", attr, locale
 
-        # the implementation of @attribute in subclasses is optional
-        if _attribute
-            _attribute data, attr, locale
+        # the implementation of @attributeData in subclasses is optional
+        if @attributeData
+            @attributeData data, attr, locale
         else
             data
 
-    function renderAttribute(_renderAttribute, item, attr, locale, parent)
+    renderAttribute: (item, attr, locale, parent) ->
         data = @escapeMarkup @attributeI18n item[attr.id] ? "", attr, locale
 
-        _renderAttribute data, attr, locale, parent
+        @renderAttributeData data, attr, locale, parent
 
 
 
