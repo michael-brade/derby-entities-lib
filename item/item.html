@@ -49,7 +49,7 @@
         {{/each}}
 
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-md-12">
                 <div class="pull-right">
                     <button type="submit" class="btn btn-primary">{{t($locale, 'actions.done')}}</button>
                 </div>
@@ -62,7 +62,7 @@
 <fieldgroup: element="fieldgroup">
     {{with @id as #id}} <!-- BUG in Derby parsing: "if !$validation.form[@id]" doesn't work! -->
         <div class="form-group {{if $validation.form[#id] === false}}has-error{{/}}">
-            <label for="{{#id}}" class="col-sm-2 control-label">
+            <label for="{{#id}}" class="col-md-2 control-label">
                 {{@label}}
             </label>
             <div class="col-md-10">
