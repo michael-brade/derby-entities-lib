@@ -39,14 +39,14 @@ export class Entity extends Type
                         item: item
                         id: item
                         title: ""
-                        text: Api.instance!.item(item, entity.id)[entity.display.attribute]  # TODO: normalize properly!?
+                        text: Api.instance!.renderAsText(item, entity.id)
                     }
                 else
                     (item) -> {
                         item: item
                         id: item.id
-                        title: item.title
-                        text: item.name              # TODO: normalize, ie. deref properly!
+                        title: ""
+                        text: Api.instance!.renderAsText(item, entity.id)
                     }
 
             resultsTemplate: "entity:-edit-select2"
