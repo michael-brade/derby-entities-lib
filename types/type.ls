@@ -15,7 +15,7 @@ export class Type
 
     # this is called by LiveScript inheritance before the subclass's prototype methods are assigned
     @extended = (subclass) !->
-        subclass::view = path.join __dirname, subclass.displayName.toLowerCase! + '.html'
+        subclass::view = path.join __dirname, subclass.displayName.toLowerCase!
 
 
     # init() sets up "$locale" and "data" model paths. "data" points directly to the
