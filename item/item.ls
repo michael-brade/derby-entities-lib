@@ -18,7 +18,7 @@ export class Item
             entity = Api.instance!.entity(entity.id)
 
 
-        item = @getAttribute('item')
+        item = model.get('item')   # TODO: @getAttribute('item') returns undefined
 
         if typeof item == "string"          # item id given, resolve to item object
             model.ref 'item', model.root.at(entity.id).at(item)
