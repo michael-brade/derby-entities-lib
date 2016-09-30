@@ -1,10 +1,10 @@
 require! {
     '../api': Api
     './type': { Type }
-    'derby-entity-select2/select2/data/model': ModelAdapter
 }
 
 _ = {
+    map: require('lodash/map')
     uniq: require('lodash/uniq')
     forEach: require('lodash/forEach')
     includes: require('lodash/includes')
@@ -16,7 +16,7 @@ export class Entity extends Type
 
     # public
     components:
-        require('derby-entity-select2/select2/core')
+        require('derby-select2/core').Select2
         ...
 
     init: (model) ->
@@ -26,25 +26,28 @@ export class Entity extends Type
         entity = Api.instance!.entity @attr.entity
 
         # select2 configuration, available in the templates under "options"
-        @model.set "select2conf",
+        model.set "select2conf",
             theme: "bootstrap"
 
-            multiple: @attr.multi
+            multiple: attr.multi
+            duplicates: attr.multi && attr.uniq == false # duplicate selections possible - makes only sense with multiple
 
-            sorter: (a, b) ->
-                displayAttrId = entity.display.attribute
-                a[displayAttrId].localeCompare(b[displayAttrId])
-
-            dataAdapter: class EntityAdapter extends ModelAdapter
-                # params.data is the item that was selected
-                select: (params) ->
-                    if attr.reference
-                        params.data = params.data.id
-
-                    super params
-
-
-            #selectionAdapter: if attr.multi then 'multiple' else 'single'
+            normalizer:
+                if attr.reference
+                then
+                    (item) -> {
+                        item: item
+                        id: item
+                        title: ""
+                        text: Api.instance!.item(item, entity.id)[entity.display.attribute]  # TODO: normalize properly!?
+                    }
+                else
+                    (item) -> {
+                        item: item
+                        id: item.id
+                        title: item.title
+                        text: item.name              # TODO: normalize, ie. deref properly!
+                    }
 
             resultsTemplate: "entity:-edit-select2"
             selectionTemplate:  "entity:-edit-select2"
@@ -57,11 +60,17 @@ export class Entity extends Type
 
     # after calling this, pathFrom will be a reference to the given item attribute
     # pathFrom is a model path
-    setupRef: (pathFrom) ->
+    setupRef: (pathFrom) !->
         super ...
 
-        # all items of this entity
-        @model.ref("items", @model.root.at(@attr.entity))
+        # all items of this entity under "items" - as array of ids or full items
+        if @attr.reference
+            @model.ref "itemsResolved", @model.root.at(@attr.entity)
+            @model.start "items", "itemsResolved", (items) ->
+                _.map items, (item) -> item.id
+        else
+            @model.ref "items", @model.root.at(@attr.entity).filter()
+
 
         # after super, pathFrom is already a reference to the subitems,
         # which now also have to be dereferenced
@@ -71,7 +80,7 @@ export class Entity extends Type
         if @attr.multi
             if @attr.reference
                 # subitems contains array of references -> resolve them
-                @model.refList "subitems", "items", subitems
+                @model.refList "subitems", "itemsResolved", subitems
             else
                 # subitems contains array of items -> use that
                 @model.ref "subitems", subitems
@@ -82,7 +91,7 @@ export class Entity extends Type
 
             if @attr.reference
                 #  resolve item reference
-                @model.refList "subitems", "items", "_subitem"
+                @model.refList "subitems", "itemsResolved", "_subitem"
             else
                 # use item directly
                 @model.ref "subitems", "_subitem"
