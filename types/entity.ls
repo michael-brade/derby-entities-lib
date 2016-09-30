@@ -39,14 +39,15 @@ export class Entity extends Type
                         item: item
                         id: item
                         title: ""
-                        text: Api.instance!.renderAsText(item, entity.id)
+                        # if item is a reference, it needs to be resolved for renderAsText()
+                        text: Api.instance!.renderAsText(Api.instance!.item(item, attr.entity), attr.entity)
                     }
                 else
                     (item) -> {
                         item: item
                         id: item.id
                         title: ""
-                        text: Api.instance!.renderAsText(item, entity.id)
+                        text: Api.instance!.renderAsText(item, attr.entity)
                     }
 
             resultsTemplate: "entity:-edit-select2"
@@ -116,6 +117,7 @@ export class Entity extends Type
             result += Api.instance!.renderAsText subitem, attr.entity, locale
             result += separator
 
+        # remove the last separator
         return result.slice(0, -separator.length)
 
 
