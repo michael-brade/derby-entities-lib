@@ -90,9 +90,9 @@ class SingletonWrapper
 
 
 
-        # create array of queries for this entity as well as all dependent entites
-        queryDependentEntities: (model, entity) ->
-            _.reduce entity.attributes, (queries, attr) ~>
+        # static: create array of queries for this entity as well as all dependent entites
+        export @queryDependentEntities = (model, entity) ->
+            _.reduce entity.attributes, (queries, attr) ->
                 if attr.type == 'entity'
                     queries.push model.query(attr.entity, {})
                 return queries
