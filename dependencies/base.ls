@@ -31,7 +31,7 @@ export class EntityDependencies
              throw new Error("Can't instantiate abstract class!");
 
         @model = model
-        @api = EntitiesApi.instance!
+        @api = EntitiesApi.instance model
 
         # entityId -> range object
         @ranges = new Map()

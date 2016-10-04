@@ -1,4 +1,7 @@
-require! path
+require! {
+    path
+    'lodash/escape': _escape
+}
 
 # This component base class provides code needed and shared by all type components.
 # It especially conceals boilerplate code for attribute and renderAttribute.
@@ -8,7 +11,11 @@ require! path
 export class Type
 
     # CTOR
-    -> if @@@ == Type then throw new Error("Cannot instantiate abstract Type class!")
+    (api) ->
+        if @@@ == Type then throw new Error("Cannot instantiate abstract Type class!")
+
+        @api = api
+
 
     renderAttributeData: -> throw new Error("renderAttributeData() unimplemented! Implement it in #{@@@displayName}!")
 
@@ -54,7 +61,7 @@ export class Type
 
 
     attribute: (item, attr, locale) ->
-        data = @attributeI18n item[attr.id] ? "", attr, locale
+        data = @@attributeI18n item[attr.id] ? "", attr, locale
 
         # the implementation of @attributeData in subclasses is optional
         if @attributeData
@@ -63,7 +70,7 @@ export class Type
             data
 
     renderAttribute: (item, attr, locale, parent) ->
-        data = @escapeMarkup @attributeI18n item[attr.id] ? "", attr, locale
+        data = _escape @@attributeI18n item[attr.id] ? "", attr, locale
 
         @renderAttributeData data, attr, locale, parent
 
@@ -71,7 +78,7 @@ export class Type
 
     ### UTILS
 
-    attributeI18n: (data, attr, locale) ->
+    @attributeI18n = (data, attr, locale) ->
         if !data || (attr.i18n && !data[locale])
             return ""
 
@@ -79,18 +86,3 @@ export class Type
             return data[locale]
 
         return data
-
-
-    escapeMarkup: (text) ->
-        return text if typeof text != 'string'
-
-        replaceMap =
-            '\\': '&#92;'
-            '&': '&amp;'
-            '<': '&lt;'
-            '>': '&gt;'
-            '"': '&quot;'
-            '\'': '&#39;'
-            '/': '&#47;'
-
-        String(text).replace //[&<>"'\/\\]//g, (_match) -> replaceMap[_match]

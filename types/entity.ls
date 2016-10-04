@@ -22,8 +22,10 @@ export class Entity extends Type
     init: (model) ->
         super ...
 
+        api = Api.instance(model)
+
         attr = @attr
-        entity = Api.instance!.entity @attr.entity
+        entity = api.entity @attr.entity
 
         # select2 configuration, available in the templates under "options"
         model.set "select2conf",
@@ -40,14 +42,14 @@ export class Entity extends Type
                         id: item
                         title: ""
                         # if item is a reference, it needs to be resolved for renderAsText()
-                        text: Api.instance!.renderAsText(Api.instance!.item(item, attr.entity), attr.entity)
+                        text: api.renderAsText(api.item(item, attr.entity), attr.entity)
                     }
                 else
                     (item) -> {
                         item: item
                         id: item.id
                         title: ""
-                        text: Api.instance!.renderAsText(item, attr.entity)
+                        text: api.renderAsText(item, attr.entity)
                     }
 
             resultsTemplate: "entity:-edit-select2"
@@ -112,9 +114,9 @@ export class Entity extends Type
 
         for subitem in data
             if attr.reference
-                subitem = Api.instance!.item subitem, attr.entity
+                subitem = @api.item subitem, attr.entity
 
-            result += Api.instance!.renderAsText subitem, attr.entity, locale
+            result += @api.renderAsText subitem, attr.entity, locale
             result += separator
 
         # remove the last separator
@@ -134,9 +136,9 @@ export class Entity extends Type
 
         for subitem in data
             if attr.reference
-                subitem = Api.instance!.item subitem, attr.entity
+                subitem = @api.item subitem, attr.entity
 
-            result += Api.instance!.render subitem, attr.entity, locale, parent
+            result += @api.render subitem, attr.entity, locale, parent
             result += separator
 
         return result.slice(0, -separator.length)
@@ -150,12 +152,12 @@ export class Entity extends Type
     itemReferences: (itemId, entityId) ->
         references = []
         # go through all entities and their attributes and check those that match entityId
-        for , entity of Api.instance!.entitiesIdx
+        for , entity of @api.entitiesIdx
             for , attr of entity.attributes
                 # does the current entity have an attribute that references entityId?
                 if attr.type == 'entity' and attr.entity == entityId and attr.reference
                     # then go through all of its items and check if itemId is in it
-                    _.forEach Api.instance!.items(entity.id), (referencingItem) ~>
+                    _.forEach @api.items(entity.id), (referencingItem) ~>
                         elem = referencingItem[attr.id]
                         if (elem == itemId) or (typeof! elem == 'Array' and _.includes(elem, itemId))
                             references.push {

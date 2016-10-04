@@ -13,9 +13,9 @@ export class Item
 
         entity = @getAttribute('entity')
         if typeof entity == "string"        # entity id given, resolve to entity object
-            entity = Api.instance!.entity(entity)
+            entity = Api.instance(model).entity(entity)
         else                                # page entity object, change to indexed object
-            entity = Api.instance!.entity(entity.id)
+            entity = Api.instance(model).entity(entity.id)
 
 
         item = model.get('item')   # TODO: @getAttribute('item') returns undefined
