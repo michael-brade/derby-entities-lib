@@ -30,6 +30,18 @@ npm test
 will then run the tests.
 
 
+## Usage
+
+```
+EntitiesApi = require('derby-entities-lib/api');
+
+// in the app init() function
+EntitiesApi.init(model, entities);  // see below for what an entities definition is
+
+// then get the API instance anywhere in the app:
+var instance = EntitiesApi.instance(model);
+```
+
 ## Terminology
 
 * entity: in case of Derby: a MongoDB collection
@@ -214,7 +226,7 @@ Maybe I will add a `validation` property to an attribute...
 
 ### Adding new Attribute Type Definitions
 
-Right now, each attribute type consists of a controller (written in JavaScript/LiveScript/whatever) and a Derby view.
+Right now, each attribute type consists of a controller (written in JavaScript/LiveScript/ES6) and a Derby view.
 It is, in effect, a Derby component.
 
 
@@ -230,7 +242,8 @@ Each type class has to provide the following methods:
 
     This returns the `item`'s attribute `attr` as html in the given `locale`.
 
-If the type extends the class `Type`, then `attribute` is optional, and instead of the whole `item`, just its attribute is provided as `data`. This is just so that some common boilerplate can be avoided.
+If the type extends the class `Type`, then `attribute` is optional, and instead of the whole `item`, just its attribute
+is provided as `data`. This is just so that some common boilerplate can be avoided.
 
 
 #### View
@@ -241,7 +254,7 @@ if the view should output plain text or html, or if the editor for that attribut
 Consequently, each component should define three subviews: `<-text:>`, `<-html:>`, and `<-edit:>`. There is a leading
 dash to make sure that views don't get confused with components, like `entity:text` vs `text`.
 
-A type finally has to be registered in `EntitiesApi` (api.ls).
+A type finally has to be registered in `EntitiesApi` (`api.ls`) by adding it to `types.ls`.
 
 
 
@@ -283,4 +296,4 @@ Testing is done with `mocha`. There are two types of tests that are used in this
 
 MIT
 
-Copyright (c) 2015 Michael Brade
+Copyright (c) 2015-2016 Michael Brade

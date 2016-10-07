@@ -1,7 +1,7 @@
 {
   "name": "derby-entities-lib",
   "description": "Base library for derby-entity CRUD component and derby-entities-visualizations",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "main": "api.ls",
   "author": {
     "name": "Michael Brade",
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "lodash": "4.x",
+    "derby-select2": "0.2.x"
   },
   "devDependencies": {
     "livescript": "1.5.x",
@@ -34,13 +35,11 @@
   },
   "scripts": {
     "prebuild": "npm run clean; touch .create_stash && git stash save --include-untracked \"npm build stash\";",
-    "build": "export DEST=dist;export ASSETS='.*.css|.*.html|./README.md|./package.json';find -path './node_modules*' -prune -o -name '*.ls' -print0| xargs -n1 -0 sh -c 'echo Compiling and minifying $0...;DEST_PATH=\"$DEST/`dirname $0`\";mkdir -p \"$DEST_PATH\";lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST_PATH/`basename -s .ls \"$0\"`\".js;';echo \"\u001b[01;32mCopying assets...\u001b[00m\";find \\( -path './node_modules*' -o -path \"./$DEST/*\" \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0| xargs -n1 -0 sh -c 'mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\"';echo \"\u001b[01;32mDone!\u001b[00m\";",
+    "build": "export DEST=dist;export ASSETS='.*.css|.*.html|./README.md|./package.json';find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -name '*.ls' -print0| xargs -n1 -P8 -0 sh -c 'echo Compiling and minifying $0...;mkdir -p \"$DEST/`dirname $0`\";lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\";';echo \"\u001b[01;32mCopying assets...\u001b[00m\";find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0| xargs -n1 -0 sh -c 'mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\"';echo \"\u001b[01;32mMinifying views...\u001b[00m\";find \"$DEST\" -name '*.html' -print0 | xargs -n1 -0 perl -i -p0e 's/\\n//g;s/ +/ /g;s/<!--.*?-->//g';echo \"\u001b[01;32mDone!\u001b[00m\";",
     "postbuild": "git stash pop --index && rm .create_stash;",
     "clean": "rm -rf dist;",
     "test": "mocha test/_*.ls test/nightmare.js;",
-    "disttest": "npm run build; TODO",
-    "prepublish": "npm run clean; npm run build;",
-    "publish": "npm publish dist;"
+    "disttest": "npm run build; TODO"
   },
   "engines": {
     "node": "4.x || 5.x"

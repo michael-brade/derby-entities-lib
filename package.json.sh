@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.1.3'
+version: '1.2.0'
 
 main: 'api.ls'
 
@@ -23,6 +23,7 @@ repository:
 dependencies:
     # utils
     'lodash': '4.x'
+    'derby-select2': '0.2.x'
 
 devDependencies:
     # building
@@ -31,7 +32,7 @@ devDependencies:
 
     # testing
     'browserify': '13.x'
-    "browserify-livescript": "0.2.x"
+    'browserify-livescript': '0.2.x'
 
     'derby': 'michael-brade/derby'
 
@@ -57,20 +58,22 @@ scripts:
         export DEST=dist;
         export ASSETS='.*\.css|.*\.html|./README\.md|./package\.json';
 
-        find -path './node_modules*' -prune -o -name '*.ls' -print0
-        | xargs -n1 -0 sh -c '
+        find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -name '*.ls' -print0
+        | xargs -n1 -P8 -0 sh -c '
             echo Compiling and minifying $0...;
-            DEST_PATH=\"$DEST/`dirname $0`\";
-            mkdir -p \"$DEST_PATH\";
-            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST_PATH/`basename -s .ls \"$0\"`\".js;
+            mkdir -p \"$DEST/`dirname $0`\";
+            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\";
         ';
 
         echo \"\033[01;32mCopying assets...\033[00m\";
-        find \\( -path './node_modules*' -o -path \"./$DEST/*\" \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0
+        find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0
         | xargs -n1 -0 sh -c '
             mkdir -p \"$DEST/`dirname \"$0\"`\";
             cp -a \"$0\" \"$DEST/$0\"
         ';
+
+        echo \"\033[01;32mMinifying views...\033[00m\";
+        find \"$DEST\" -name '*.html' -print0 | xargs -n1 -0 perl -i -p0e 's/\\n//g;s/ +/ /g;s/<!--.*?-->//g';
 
         echo \"\033[01;32mDone!\033[00m\";
     "
@@ -85,10 +88,7 @@ scripts:
 
     disttest: 'npm run build; TODO'  # find out how to run the tests using dist/*
 
-    ## publishing - run as "npm run publish"
-
-    prepublish: "npm run clean; npm run build;"
-    publish: "npm publish dist;"
+    ## publishing: run "npm run build; cd dist; npm publish"
 
 engines:
     node: '4.x || 5.x'
