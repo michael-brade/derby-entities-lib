@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.2.0'
+version: '1.2.1'
 
 main: 'api.ls'
 
@@ -73,7 +73,7 @@ scripts:
         ';
 
         echo \"\033[01;32mMinifying views...\033[00m\";
-        find \"$DEST\" -name '*.html' -print0 | xargs -n1 -0 perl -i -p0e 's/\\n//g;s/ +/ /g;s/<!--.*?-->//g';
+        find \"$DEST\" -name '*.html' -print0 | xargs -n1 -0 perl -i -p0e 's/ *\\n *//g;s/ +/ /g;s/<!--.*?-->//g';
 
         echo \"\033[01;32mDone!\033[00m\";
     "

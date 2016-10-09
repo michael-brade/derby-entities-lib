@@ -242,8 +242,9 @@ Each type class has to provide the following methods:
 
     This returns the `item`'s attribute `attr` as html in the given `locale`.
 
-If the type extends the class `Type`, then `attribute` is optional, and instead of the whole `item`, just its attribute
-is provided as `data`. This is just so that some common boilerplate can be avoided.
+If the type extends the class `Type`, then `renderAttributeData`, and optionally `attributeData`, have to be implemented.
+Instead of the whole `item` as first argument, only its attribute is provided as `data`. This is just so that some common
+boilerplate can be avoided.
 
 
 #### View
