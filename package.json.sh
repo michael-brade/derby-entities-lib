@@ -29,6 +29,7 @@ devDependencies:
     # building
     'livescript': '1.5.x'
     'uglify-js': '2.7.x'
+    'html-minifier': '3.x'
 
     # testing
     'browserify': '13.x'
@@ -56,24 +57,33 @@ scripts:
     # build the distribution under dist: create directory structure, compile to JavaScript, uglify
     build: "
         export DEST=dist;
-        export ASSETS='.*\.css|.*\.html|./README\.md|./package\.json';
+        export SOURCES='*.ls';
+        export VIEWS='*.html';
+        export ASSETS='.*\.css|./README\.md|./package\.json';
+        export IGNORE=\"./$DEST|./test|./node_modules\";
 
-        find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -name '*.ls' -print0
+        echo \"\033[01;32mCompiling and minifying...\033[00m\";
+        find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$SOURCES\" -print0
         | xargs -n1 -P8 -0 sh -c '
-            echo Compiling and minifying $0...;
+            echo $0...;
             mkdir -p \"$DEST/`dirname $0`\";
-            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\";
-        ';
-
-        echo \"\033[01;32mCopying assets...\033[00m\";
-        find \\( -path './node_modules' -o -path \"./$DEST\" -o -path './test' \\) -prune -o -regextype posix-egrep -regex $ASSETS -print0
-        | xargs -n1 -0 sh -c '
-            mkdir -p \"$DEST/`dirname \"$0\"`\";
-            cp -a \"$0\" \"$DEST/$0\"
-        ';
+            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\"';
 
         echo \"\033[01;32mMinifying views...\033[00m\";
-        find \"$DEST\" -name '*.html' -print0 | xargs -n1 -0 perl -i -p0e 's/ *\\n *//g;s/ +/ /g;s/<!--.*?-->//g';
+        find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$VIEWS\" -print0
+        | xargs -n1 -P8 -0 sh -c '
+            echo \"$0 -> $DEST/$0\";
+            mkdir -p \"$DEST/`dirname $0`\";
+            html-minifier --config-file .html-minifierrc -o \"$DEST/$0\" \"$0\"'
+        | column -t -c 3;
+
+        echo \"\033[01;32mCopying assets...\033[00m\";
+        find -regextype posix-egrep -regex $IGNORE -prune -o -regex $ASSETS -print0
+        | xargs -n1 -0 sh -c '
+            echo \"$0 -> $DEST/$0\";
+            mkdir -p \"$DEST/`dirname \"$0\"`\";
+            cp -a \"$0\" \"$DEST/$0\"'
+        | column -t -c 3;
 
         echo \"\033[01;32mDone!\033[00m\";
     "
