@@ -70,7 +70,10 @@ export class Type
             data
 
     renderAttribute: (item, attr, locale, parent) ->
-        data = _escape @@attributeI18n item[attr.id] ? "", attr, locale
+        data = @@attributeI18n item[attr.id] ? "", attr, locale
+
+        if typeof data == 'string'
+            data = _escape data
 
         @renderAttributeData data, attr, locale, parent
 
