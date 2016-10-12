@@ -1,5 +1,3 @@
-'use strict'
-
 Model = require 'racer/lib/Model'
 
 

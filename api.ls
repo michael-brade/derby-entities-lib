@@ -8,9 +8,9 @@ require! {
 
 
 
-## Init the EntitiesApi singleton.
+## Init the EntitiesApi for the given model.
 #
-# Only needs to be called once.
+# Only needs to be called once per model.
 export init = (model, entities) ->
     model.root.setNull '$entities.api', new EntitiesApi(model, entities)
 

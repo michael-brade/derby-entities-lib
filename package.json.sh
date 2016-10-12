@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.2.1'
+version: '1.2.2'
 
 main: 'api.ls'
 
@@ -52,7 +52,11 @@ scripts:
 
     # make sure a stash will be created and stash everything not committed
     # beware: --all would be really correct, but it also removes node_modules, so use --include-untracked instead
-    prebuild: 'npm run clean; touch .create_stash && git stash save --include-untracked "npm build stash";'
+    prebuild: '
+        npm run clean;
+        touch .create_stash && git stash save --include-untracked "npm build stash";
+        npm test || { npm run postbuild; exit 1; };
+    '
 
     # build the distribution under dist: create directory structure, compile to JavaScript, uglify
     build: "
@@ -94,11 +98,12 @@ scripts:
 
     ## testing
 
-    test: 'mocha test/_*.ls test/nightmare.js;'
+    test: 'mocha test/_*.ls test/api.ls;'
 
-    disttest: 'npm run build; TODO'  # find out how to run the tests using dist/*
+    disttest: 'cd dist; npm run test;'  # TODO
 
-    ## publishing: run "npm run build; cd dist; npm publish"
+    ## publishing
+    release: "npm run build; cd dist; npm publish;"
 
 engines:
     node: '4.x || 5.x'
