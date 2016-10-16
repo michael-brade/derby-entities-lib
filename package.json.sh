@@ -2,7 +2,7 @@
 
 name: 'derby-entities-lib'
 description: 'Base library for derby-entity CRUD component and derby-entities-visualizations'
-version: '1.2.3'
+version: '1.2.4'
 
 main: 'api.ls'
 
@@ -60,6 +60,7 @@ scripts:
 
     # build the distribution under dist: create directory structure, compile to JavaScript, uglify
     build: "
+        set -e;
         export DEST=dist;
         export SOURCES='*.ls';
         export VIEWS='*.html';
@@ -68,17 +69,19 @@ scripts:
 
         echo \"\033[01;32mCompiling and minifying...\033[00m\";
         find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$SOURCES\" -print0
-        | xargs -n1 -P8 -0 sh -c '
+        | xargs -n1 -P8 -0 bash -c '
+            set -e; set -o pipefail;
             echo $0...;
             mkdir -p \"$DEST/`dirname $0`\";
-            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\"';
+            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\" || exit 255;
+        ';
 
         echo \"\033[01;32mMinifying views...\033[00m\";
         find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$VIEWS\" -print0
         | xargs -n1 -P8 -0 sh -c '
             echo \"$0 -> $DEST/$0\";
             mkdir -p \"$DEST/`dirname $0`\";
-            html-minifier --config-file .html-minifierrc -o \"$DEST/$0\" \"$0\"'
+            html-minifier --config-file .html-minifierrc -o \"$DEST/$0\" \"$0\" || exit 255'
         | column -t -c 3;
 
         echo \"\033[01;32mCopying assets...\033[00m\";
@@ -86,7 +89,7 @@ scripts:
         | xargs -n1 -0 sh -c '
             echo \"$0 -> $DEST/$0\";
             mkdir -p \"$DEST/`dirname \"$0\"`\";
-            cp -a \"$0\" \"$DEST/$0\"'
+            cp -a \"$0\" \"$DEST/$0\" || exit 255'
         | column -t -c 3;
 
         echo \"\033[01;32mDone!\033[00m\";
@@ -103,7 +106,7 @@ scripts:
     disttest: 'cd dist; npm run test;'  # TODO
 
     ## publishing
-    release: "npm run build; cd dist; npm publish;"
+    release: "npm run build && cd dist && npm publish;"
 
 engines:
     node: '4.x || 5.x'
