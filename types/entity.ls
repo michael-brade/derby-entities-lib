@@ -34,30 +34,20 @@ export class Entity extends Type
             multiple: attr.multi
             duplicates: attr.multi && attr.uniq == false # duplicate selections possible - makes only sense with multiple
 
-            normalizer:
-                if attr.reference
-                then
-                    (item) -> {
-                        item: item
-                        id: item
-                        title: ""
-                        # if item is a reference, it needs to be resolved for renderAsText()
-                        text: api.renderAsText(api.item(item, attr.entity), attr.entity)
-                    }
-                else
-                    (item) -> {
-                        item: item
-                        id: item.id
-                        title: ""
-                        text: api.renderAsText(item, attr.entity)
-                    }
+            normalizer: (item) ->
+                {
+                    item: item
+                    id: item.id
+                    title: ""
+                    text: api.renderAsText(item, attr.entity)
+                }
 
             resultsTemplate: "entity:-edit-select2"
             selectionTemplate:  "entity:-edit-select2"
 
             # used by -edit-select2 view/template
             templateArgs:
-                entity: attr.entity
+                attr: attr
 
 
 
@@ -66,13 +56,7 @@ export class Entity extends Type
     setupRef: (pathFrom) !->
         super ...
 
-        # all items of this entity under "items" - as array of ids or full items
-        if @attr.reference
-            @model.ref "itemsResolved", @model.root.at(@attr.entity)
-            @model.start "items", "itemsResolved", (items) ->
-                _.map items, (item) -> item.id
-        else
-            @model.ref "items", @model.root.at(@attr.entity).filter()
+        @model.ref "items", @model.root.at(@attr.entity).filter()
 
 
         # after super, pathFrom is already a reference to the subitems,
@@ -83,7 +67,7 @@ export class Entity extends Type
         if @attr.multi
             if @attr.reference
                 # subitems contains array of references -> resolve them
-                @model.refList "subitems", "itemsResolved", subitems
+                @model.refList "subitems", @model.root.at(@attr.entity), subitems
             else
                 # subitems contains array of items -> use that
                 @model.ref "subitems", subitems
@@ -94,7 +78,7 @@ export class Entity extends Type
 
             if @attr.reference
                 #  resolve item reference
-                @model.refList "subitems", "itemsResolved", "_subitem"
+                @model.refList "subitems", @model.root.at(@attr.entity), "_subitem"
             else
                 # use item directly
                 @model.ref "subitems", "_subitem"

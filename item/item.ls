@@ -10,7 +10,6 @@ export class Item
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')
 
-
         entity = @getAttribute('entity')
         if typeof entity == "string"        # entity id given, resolve to entity object
             entity = Api.instance(model).entity(entity)
@@ -19,10 +18,6 @@ export class Item
 
 
         item = model.get('item')   # TODO: @getAttribute('item') returns undefined
-
-        if typeof item == "string"          # item id given, resolve to item object
-            model.ref 'item', model.root.at(entity.id).at(item)
-
 
         model.set "displayAttr", entity.attributes[entity.display.attribute]
 

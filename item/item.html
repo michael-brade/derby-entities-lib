@@ -21,7 +21,7 @@
 <-decorate:>
     {{if decorationAttrs.length > @current}}
         <view name="-decorate" current="{{@current + 1}}" inherit>
-            <view name="{{decorationAttrs[@current].type}}" item="{{item}}" attr="{{decorationAttrs[@current]}}" inherit>
+            <view name="{{decorationAttrs[@current].type}}" attr="{{decorationAttrs[@current]}}" inherit>
                 {{@content}}
             </view>
         </view>
