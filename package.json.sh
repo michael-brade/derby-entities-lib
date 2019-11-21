@@ -27,23 +27,23 @@ dependencies:
 
 devDependencies:
     # building
-    'livescript': '1.5.x'
-    'uglify-js': '2.7.x'
+    'livescript': '1.6.x'
+    'uglify-js': '3.x'
     'html-minifier': '3.x'
 
     # testing
-    'browserify': '13.x'
+    'browserify': '16.x'
     'browserify-livescript': '0.2.x'
 
-    'derby': 'michael-brade/derby'
+    'derby': '0.10.x'
 
-    'mocha': '3.x'
-    'mocha-generators': '1.x'
+    'mocha': '6.x'
+    'mocha-generators': '2.x'
 
-    'nightmare': '2.x'
+    'nightmare': '3.x'
 
-    'chai': '3.x'
-    'chai-as-promised': '5.x'
+    'chai': '4.x'
+    'chai-as-promised': '7.x'
 
 
 
@@ -73,7 +73,7 @@ scripts:
             set -e; set -o pipefail;
             echo $0...;
             mkdir -p \"$DEST/`dirname $0`\";
-            lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\" || exit 255;
+            lsc -cp \"$0\" | uglifyjs -cm -o \"$DEST/${0%.*}.js\" || exit 255;
         ';
 
         echo \"\033[01;32mMinifying views...\033[00m\";

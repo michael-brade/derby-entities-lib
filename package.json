@@ -22,21 +22,21 @@
     "derby-select2": "0.2.x"
   },
   "devDependencies": {
-    "livescript": "1.5.x",
-    "uglify-js": "2.7.x",
+    "livescript": "1.6.x",
+    "uglify-js": "3.x",
     "html-minifier": "3.x",
-    "browserify": "13.x",
+    "browserify": "16.x",
     "browserify-livescript": "0.2.x",
-    "derby": "michael-brade/derby",
-    "mocha": "3.x",
-    "mocha-generators": "1.x",
-    "nightmare": "2.x",
-    "chai": "3.x",
-    "chai-as-promised": "5.x"
+    "derby": "0.10.x",
+    "mocha": "6.x",
+    "mocha-generators": "2.x",
+    "nightmare": "3.x",
+    "chai": "4.x",
+    "chai-as-promised": "7.x"
   },
   "scripts": {
     "prebuild": "npm run clean;touch .create_stash && git stash save --include-untracked \"npm build stash\";npm test || { npm run postbuild; exit 1; };",
-    "build": "set -e;export DEST=dist;export SOURCES='*.ls';export VIEWS='*.html';export ASSETS='.*.css|./README.md|./package.json';export IGNORE=\"./$DEST|./test|./node_modules\";echo \"\u001b[01;32mCompiling and minifying...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$SOURCES\" -print0| xargs -n1 -P8 -0 bash -c 'set -e; set -o pipefail;echo $0...;mkdir -p \"$DEST/`dirname $0`\";lsc -cp \"$0\" | uglifyjs - -cm -o \"$DEST/${0%.*}.js\" || exit 255;';echo \"\u001b[01;32mMinifying views...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$VIEWS\" -print0| xargs -n1 -P8 -0 sh -c 'echo \"$0 -> $DEST/$0\";mkdir -p \"$DEST/`dirname $0`\";html-minifier --config-file .html-minifierrc -o \"$DEST/$0\" \"$0\" || exit 255'| column -t -c 3;echo \"\u001b[01;32mCopying assets...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -regex $ASSETS -print0| xargs -n1 -0 sh -c 'echo \"$0 -> $DEST/$0\";mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\" || exit 255'| column -t -c 3;echo \"\u001b[01;32mDone!\u001b[00m\";",
+    "build": "set -e;export DEST=dist;export SOURCES='*.ls';export VIEWS='*.html';export ASSETS='.*.css|./README.md|./package.json';export IGNORE=\"./$DEST|./test|./node_modules\";echo \"\u001b[01;32mCompiling and minifying...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$SOURCES\" -print0| xargs -n1 -P8 -0 bash -c 'set -e; set -o pipefail;echo $0...;mkdir -p \"$DEST/`dirname $0`\";lsc -cp \"$0\" | uglifyjs -cm -o \"$DEST/${0%.*}.js\" || exit 255;';echo \"\u001b[01;32mMinifying views...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -name \"$VIEWS\" -print0| xargs -n1 -P8 -0 sh -c 'echo \"$0 -> $DEST/$0\";mkdir -p \"$DEST/`dirname $0`\";html-minifier --config-file .html-minifierrc -o \"$DEST/$0\" \"$0\" || exit 255'| column -t -c 3;echo \"\u001b[01;32mCopying assets...\u001b[00m\";find -regextype posix-egrep -regex $IGNORE -prune -o -regex $ASSETS -print0| xargs -n1 -0 sh -c 'echo \"$0 -> $DEST/$0\";mkdir -p \"$DEST/`dirname \"$0\"`\";cp -a \"$0\" \"$DEST/$0\" || exit 255'| column -t -c 3;echo \"\u001b[01;32mDone!\u001b[00m\";",
     "postbuild": "git stash pop --index && rm .create_stash;",
     "clean": "rm -rf dist;",
     "test": "mocha test/_*.ls test/api.ls;",
