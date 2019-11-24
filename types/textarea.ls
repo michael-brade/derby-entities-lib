@@ -4,7 +4,8 @@ require! {
 
 export class Textarea extends Type
 
-    style: __dirname + "/textarea"
+    @view = Object.assign {}, @view,
+        style: __dirname + "/textarea"
 
 
     create: (model, dom) ->

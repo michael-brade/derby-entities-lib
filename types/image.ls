@@ -4,7 +4,8 @@ require! {
 
 export class Image extends Type
 
-    style: __dirname + "/image"
+    @view = Object.assign {}, @view,
+        style: __dirname + "/image"
 
 
     create: (model, dom) ->

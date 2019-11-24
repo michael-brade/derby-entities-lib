@@ -1,6 +1,7 @@
 require! {
     path
     'lodash/escape': _escape
+    derby: { Component }
 }
 
 # This component base class provides code needed and shared by all type components.
@@ -8,7 +9,7 @@ require! {
 #
 # TODO: I guess all this effort is only needed because of jQuery DataTables...
 # There is no need for renderAttribute otherwise, is there?
-export class Type
+export class Type extends Component
 
     # CTOR
     (api) ->
@@ -21,8 +22,12 @@ export class Type
 
 
     # this is called by LiveScript inheritance before the subclass's prototype methods are assigned
+    # it adds the html file (view name) to the view property
     @extended = (subclass) !->
-        subclass::view = path.join __dirname, subclass.displayName.toLowerCase!
+        name = subclass.displayName.toLowerCase!
+        subclass.view =
+            is: name
+            file: path.join __dirname, name
 
 
     # init() sets up "$locale" and "data" model paths. "data" points directly to the

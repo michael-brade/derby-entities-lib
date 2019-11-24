@@ -4,7 +4,8 @@ require! {
 
 export class Color extends Type
 
-    style: __dirname + "/color"
+    @view = Object.assign {}, @view,
+        style: __dirname + "/color"
 
 
     renderAttributeData: (data, attr, locale, parent) ->

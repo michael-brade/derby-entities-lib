@@ -15,9 +15,11 @@ export class Entity extends Type
     # private static
 
     # public
-    components:
-        require('derby-select2/core').Select2
-        ...
+
+    @view = Object.assign {}, @view,
+        dependencies:
+            * require('derby-select2/core').Select2
+            ...
 
     init: (model) ->
         super ...

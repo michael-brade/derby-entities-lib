@@ -30,7 +30,7 @@
     {{/each}}
 
 <-edit:>
-    <select2 id="select2-{{@id}}" class="form-control" options="{{select2conf}}"
+    <view is="select2" id="select2-{{@id}}" class="form-control" options="{{select2conf}}"
         data="{{items}}" value="{{subitems}}" inherit />
 
 <!-- View template used for displaying available items in the results dropdown and selected items.

@@ -1,11 +1,13 @@
 require! {
     '../api': Api
     path
+    derby: { Component }
 }
 
-export class Item
+export class Item extends Component
 
-    view: path.join __dirname, 'item.html'
+    @view =
+        file: path.join __dirname, 'item.html'
 
     init: (model) !->
         model.ref '$locale', model.root.at('$locale')

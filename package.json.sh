@@ -35,7 +35,7 @@ devDependencies:
     'browserify': '16.x'
     'browserify-livescript': '0.2.x'
 
-    'derby': '0.10.x'
+    'derby': 'michael-brade/derby'
 
     'mocha': '6.x'
     'mocha-generators': '2.x'
