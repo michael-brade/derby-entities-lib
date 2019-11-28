@@ -4,7 +4,6 @@ require! {
 }
 
 _ = {
-    map: require('lodash/map')
     uniq: require('lodash/uniq')
     forEach: require('lodash/forEach')
     includes: require('lodash/includes')
@@ -12,9 +11,7 @@ _ = {
 
 export class Entity extends Type
 
-    # private static
-
-    # public
+    # public static
 
     @view = Object.assign {}, @view,
         dependencies:
@@ -44,10 +41,10 @@ export class Entity extends Type
                     text: api.renderAsText(item, attr.entity)
                 }
 
-            resultsTemplate: "entity:-edit-select2"
-            selectionTemplate:  "entity:-edit-select2"
+            resultsTemplate: "entity:entity:edit-select2"
+            selectionTemplate:  "entity:entity:edit-select2"
 
-            # used by -edit-select2 view/template
+            # used by edit-select2 view/template
             templateArgs:
                 attr: attr
 
