@@ -4,7 +4,7 @@ require! {
 }
 
 _ = {
-    uniq: require('lodash/uniq')
+    uniqBy: require('lodash/uniqBy')
     forEach: require('lodash/forEach')
     includes: require('lodash/includes')
 }
@@ -149,4 +149,4 @@ export class Entity extends Type
                             }
 
         return null if references.length == 0
-        return _.uniq references, (ref) -> ref.entity.id + "--" + ref.item.id
+        return _.uniqBy references, (ref) -> ref.entity.id + "--" + ref.item.id

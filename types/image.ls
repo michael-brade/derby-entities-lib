@@ -13,7 +13,7 @@ export class Image extends Type
 
         @reader  = new FileReader
         @reader.onloadend = ~>
-            @setData "data", @reader.result
+            @setData @reader.result
 
 
         @imgInput.onchange = ~>
